@@ -69,10 +69,34 @@
         </video>
       </div>
     </div>
-    <div class="digital-gift-title">
+    <div class="digital-gift-title clickable-title" onclick="openLovePages()">
       Amo-te Muito Marta/Maria❤️
     </div>
   </section>
+
+  <!-- Páginas de amor integradas -->
+  <div id="love-pages-container" class="love-pages-hidden">
+    <div class="notebook-container">
+      <div class="notebook-page">
+        <div class="lined-paper">
+          <button class="close-btn" onclick="closeLovePages()">×</button>
+          <div class="holes">
+            <div class="hole"></div>
+            <div class="hole"></div>
+          </div>
+          <div class="content" id="page-content">
+            <!-- Conteúdo será preenchido dinamicamente -->
+          </div>
+        </div>
+      </div>
+      <div class="navigation">
+        <button onclick="previousPage()" class="nav-btn" id="prev-btn">← Anterior</button>
+        <div class="page-counter" id="page-counter">1/6</div>
+        <button onclick="nextPage()" class="nav-btn" id="next-btn">Próxima →</button>
+      </div>
+    </div>
+  </div>
+
   <script defer src="script.js"></script>
   <script>
     // Animação de explosão de corações ao carregar
