@@ -14,6 +14,9 @@
   <meta property="og:image" content="assets/images/IMG_2714.jpg" />
 </head>
 <body>
+  <!-- Container para animação de corações -->
+  <div class="hearts-explosion" id="heartsContainer"></div>
+  
   <noscript><div style="background:#fff3f7;border:2px solid #ff6f91;padding:10px;border-radius:8px;max-width:400px;margin:10px auto;font-family:Arial,sans-serif;">Este site funciona melhor com JavaScript ativo ❤️</div></noscript>
   <header>
     <h1>Dias Juntos <span aria-hidden="true">❤️</span></h1>
@@ -71,5 +74,35 @@
     </div>
   </section>
   <script defer src="script.js"></script>
+  <script>
+    // Animação de explosão de corações ao carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        const heartsContainer = document.getElementById('heartsContainer');
+        
+        // Criar 30 corações
+        for (let i = 0; i < 30; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'heart';
+          heart.innerHTML = '❤️';
+          
+          // Posição aleatória na largura da tela
+          heart.style.left = Math.random() * 90 + '%';
+          heart.style.bottom = '0px';
+          
+          // Delay aleatório para cada coração
+          heart.style.animationDelay = (Math.random() * 1.5) + 's';
+          
+          // Adicionar ao container
+          heartsContainer.appendChild(heart);
+        }
+        
+        // Remover container após animação
+        setTimeout(() => {
+          heartsContainer.remove();
+        }, 5000);
+      }, 500);
+    });
+  </script>
 </body>
 </html>
