@@ -12,6 +12,89 @@
   <meta property="og:description" content="Dias juntos e memórias especiais." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/IMG_2714.jpg" />
+  <style>
+    /* Overlay e animações para a sequência de amor (mantém apenas o essencial) */
+    .overlay.hidden { display: none; }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.6);
+      z-index: 999999; /* acima de tudo */
+      padding: 20px;
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+    .overlay-content {
+      background: linear-gradient(180deg,#fff5f8,#fff);
+      border-radius: 14px;
+      padding: 20px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+      position: relative;
+    }
+
+    /* Botão 'Amo-te...' — visual de botão, acessível e responsivo */
+    .digital-gift-title {
+      display: block;
+      width: calc(100% - 32px);
+      max-width: 520px;
+      margin: 10px auto 14px;
+      padding: 12px 16px;
+      text-align: center;
+      color: #c83a6f;
+      background: #fff6f8;
+      border: 1px solid #ffd7e2;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(0,0,0,.06);
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+      outline: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .digital-gift-title:hover {
+      background: #fff2f6;
+      border-color: #ffc8d8;
+      box-shadow: 0 6px 18px rgba(0,0,0,.08);
+      transform: translateY(-1px);
+    }
+    .digital-gift-title:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(0,0,0,.06);
+    }
+    .digital-gift-title:focus-visible {
+      box-shadow: 0 0 0 3px rgba(255,107,143,.35), 0 6px 16px rgba(0,0,0,.08);
+    }
+    .digital-gift-title.is-busy {
+      opacity: .85;
+      cursor: default;
+      pointer-events: none;
+      background: #fff7f9;
+      border-color: #ffe2ea;
+    }
+
+    /* Forçar a aparecer mesmo que CSS externo esconda */
+    .digital-gift { display:block !important; position:relative; z-index:2; }
+    .digital-gift-title, .clickable-title { display:block !important; visibility:visible !important; opacity:1 !important; }
+
+    @media (max-width:480px) {
+      .overlay-content { padding:16px; max-width: 92%; }
+      .seq-text { font-size:18px; min-height:48px; }
+      .seq-number { font-size:36px; }
+      .digital-gift-title { font-size: 16.5px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .digital-gift-title { transition: none; }
+    }
+  </style>
 </head>
 <body>
   <!-- Container para animação de corações -->
@@ -42,57 +125,68 @@
   <section class="special-dates">
     <h2>Datas que faço questão de lembrar</h2>
     <div class="dates-container">
-      <div class="date-card">
+      <!-- Ordenadas cronologicamente ao longo do ano -->
+      <div class="date-card" data-date="06-29">
+        <div class="date-number">29</div>
+        <div class="date-month">Junho</div>
+        <div class="date-description">Dia que nos conhecemos</div>
+      </div>
+      <div class="date-card" data-date="07-02">
+        <div class="date-number">02</div>
+        <div class="date-month">Julho</div>
+        <div class="date-description">Primeiro beijo — 14:55</div>
+      </div>
+      <div class="date-card" data-date="09-15">
+        <div class="date-number">15</div>
+        <div class="date-month">Setembro</div>
+        <div class="date-description">Aniversário do Ivan</div>
+      </div>
+      <div class="date-card" data-date="10-18">
         <div class="date-number">18</div>
         <div class="date-month">Outubro</div>
         <div class="date-description">Aniversário da Princesa</div>
       </div>
-      <div class="date-card">
-        <div class="date-number">02</div>
-        <div class="date-month">Julho</div>
-        <div class="date-description">Dia que nos conhecemos</div>
-      </div>
     </div>
   </section>
   <section class="digital-gift">
-    <div class="video-container" aria-label="Vídeos especiais">
-      <div class="video">
-        <video class="auto-play-video" preload="metadata" playsinline loop muted>
-          <source src="assets/videos/Dành tặng anh ngừi iu Phamchivyz cụa t.mov" type="video/mp4">
-          O teu navegador não suporta vídeo.
-        </video>
-      </div>
-      <div class="video">
-        <video class="auto-play-video" preload="metadata" playsinline loop muted>
-          <source src="assets/videos/Christmas_for_Princess_Jang.mp4" type="video/mp4">
-          O teu navegador não suporta vídeo.
-        </video>
-      </div>
-    </div>
-    <div class="digital-gift-title clickable-title" onclick="openLovePages()">
+    <!-- Botão visível/clicável -->
+    <div id="digital-gift-btn"
+         class="digital-gift-title clickable-title"
+         role="button"
+         tabindex="0">
       Amo-te Muito Marta/Maria❤️
     </div>
   </section>
 
+  <!-- Inserir overlay/sequence antes do container das páginas de amor -->
+  <div id="love-sequence-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Sequência de amor">
+    <div class="overlay-content">
+      <button id="seq-skip" class="seq-skip" onclick="skipSequence()" aria-label="Pular sequência">Pular ✕</button>
+      <div id="seq-text" class="seq-text" aria-live="polite"></div>
+      <div id="seq-extra" style="margin-top:6px;"></div>
+    </div>
+  </div>
+
   <!-- Páginas de amor integradas -->
-  <div id="love-pages-container" class="love-pages-hidden">
-    <div class="notebook-container">
-      <div class="notebook-page">
+  <div id="love-pages-container" class="love-pages-hidden" aria-hidden="true">
+    <div class="notebook-container" role="region" aria-label="Caderno de mensagens">
+      <div class="notebook-page" role="document">
         <div class="lined-paper">
-          <button class="close-btn" onclick="closeLovePages()">×</button>
-          <div class="holes">
+          <button class="close-btn" onclick="closeLovePages()" aria-label="Fechar páginas">×</button>
+          <div class="holes" aria-hidden="true">
             <div class="hole"></div>
             <div class="hole"></div>
           </div>
-          <div class="content" id="page-content">
+          <div class="content" id="page-content" role="article" aria-live="polite" tabindex="0">
+            <div style="text-align:center;color:#777;">Carrega em "Amo-te Muito..." para ver as páginas</div>
             <!-- Conteúdo será preenchido dinamicamente -->
           </div>
         </div>
       </div>
-      <div class="navigation">
-        <button onclick="previousPage()" class="nav-btn" id="prev-btn">← Anterior</button>
-        <div class="page-counter" id="page-counter">1/6</div>
-        <button onclick="nextPage()" class="nav-btn" id="next-btn">Próxima →</button>
+      <div class="navigation" role="navigation" aria-label="Navegação de páginas">
+        <button onclick="previousPage()" class="nav-btn" id="prev-btn" aria-label="Página anterior" tabindex="0">← Anterior</button>
+        <div class="page-counter" id="page-counter" aria-live="polite">1/6</div>
+        <button onclick="nextPage()" class="nav-btn" id="next-btn" aria-label="Próxima página" tabindex="0">Próxima →</button>
       </div>
     </div>
   </div>
@@ -126,6 +220,277 @@
           heartsContainer.remove();
         }, 5000);
       }, 500);
+    });
+
+    // Contador dinâmico: inicia em 29 de Junho do ano apropriado
+    document.addEventListener('DOMContentLoaded', function () {
+      const now = new Date();
+      // 29 de Junho do ano corrente (mes é 5 porque janeiro = 0)
+      let startDate = new Date(now.getFullYear(), 5, 29, 0, 0, 0);
+      // Se 29/06 deste ano ainda não ocorreu, usa 29/06 do ano anterior
+      if (startDate > now) {
+        startDate = new Date(now.getFullYear() - 1, 5, 29, 0, 0, 0);
+      }
+
+      function updateCounter() {
+        const now = new Date();
+        let diff = now - startDate;
+        if (diff < 0) diff = 0;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        diff -= days * (1000 * 60 * 60 * 24);
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        diff -= hours * (1000 * 60 * 60);
+        const minutes = Math.floor(diff / (1000 * 60));
+        diff -= minutes * (1000 * 60);
+        const seconds = Math.floor(diff / 1000);
+
+        const el = id => document.getElementById(id);
+        if (el('days')) el('days').textContent = String(days).padStart(2, '0');
+        if (el('hours')) el('hours').textContent = String(hours).padStart(2, '0');
+        if (el('minutes')) el('minutes').textContent = String(minutes).padStart(2, '0');
+        if (el('seconds')) el('seconds').textContent = String(seconds).padStart(2, '0');
+      }
+
+      updateCounter();
+      setInterval(updateCounter, 1000);
+    });
+  </script>
+
+  <!-- ...existing code de validação de vídeos... -->
+
+  <script>
+    (function(){
+      let seqState = { running: false, skipped: false, currentPage: 0, pages: [] };
+      const fakeNumber = 36;
+      const targetPhrase = "Amo-te muito Marta/Maria";
+
+      function setSeqHTML(html) {
+        const el = document.getElementById('seq-text');
+        if (el) el.innerHTML = html;
+      }
+      function showOverlay() {
+        seqState.skipped = false;
+        seqState.running = true;
+        const overlay = document.getElementById('love-sequence-overlay');
+        if (overlay) {
+          overlay.classList.remove('hidden');
+          overlay.style.display = 'flex';
+          overlay.setAttribute('aria-hidden','false');
+        }
+      }
+      function hideOverlay() {
+        const overlay = document.getElementById('love-sequence-overlay');
+        if (overlay) {
+          overlay.classList.add('hidden');
+          overlay.style.display = '';
+          overlay.setAttribute('aria-hidden','true');
+        }
+        seqState.running = false;
+      }
+      window.skipSequence = function() {
+        seqState.skipped = true;
+      };
+
+      function typeText(text, speed=40) {
+        return new Promise(resolve=>{
+          const el = document.getElementById('seq-text');
+          if (!el) return resolve();
+          el.textContent = '';
+          let i = 0;
+          (function step(){
+            if (seqState.skipped) { el.textContent = text; return resolve(); }
+            if (i < text.length) {
+              el.textContent += text[i++];
+              setTimeout(step, speed);
+            } else {
+              setTimeout(resolve, 500);
+            }
+          })();
+        });
+      }
+      function eraseText(speed=24) {
+        return new Promise(resolve=>{
+          const el = document.getElementById('seq-text');
+          if (!el) return resolve();
+          let txt = el.textContent;
+          let i = txt.length;
+          (function step(){
+            if (seqState.skipped) { el.textContent = ''; return resolve(); }
+            if (i > 0) {
+              i--;
+              el.textContent = txt.slice(0,i);
+              setTimeout(step, speed);
+            } else resolve();
+          })();
+        });
+      }
+      async function showLines(lines) {
+        const container = document.getElementById('seq-extra');
+        container.innerHTML = '';
+        for (let i=0;i<lines.length;i++) {
+          if (seqState.skipped) {
+            container.innerHTML = lines.map(l=>`<div class="seq-line show">${l}</div>`).join('');
+            return;
+          }
+          const div = document.createElement('div');
+          div.className = 'seq-line';
+          div.textContent = lines[i];
+          container.appendChild(div);
+          requestAnimationFrame(()=> div.classList.add('show'));
+          await new Promise(r=>setTimeout(r, 700));
+        }
+      }
+
+      function populatePagesWithRepeats(count) {
+        const perPage = 6; // linhas por página
+        const pages = [];
+        for (let i=0;i<count;i+=perPage) {
+          const chunk = [];
+          for (let j=0;j<perPage && (i+j)<count; j++) {
+            chunk.push(`<div style="padding:8px 0;font-size:18px;color:#c83a6f;font-weight:600;text-align:center;">${targetPhrase}</div>`);
+          }
+          pages.push(`<div class="page-block">${chunk.join('')}</div>`);
+        }
+        seqState.pages = pages;
+        seqState.currentPage = 0;
+        showPage(0);
+      }
+
+      function showPage(idx) {
+        const pc = document.getElementById('page-content');
+        const counter = document.getElementById('page-counter');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        if (!pc) return;
+        pc.innerHTML = seqState.pages[idx] || '<div style="text-align:center;color:#777;">Sem conteúdo</div>';
+        seqState.currentPage = idx;
+        if (counter) counter.textContent = `${idx+1}/${Math.max(1, seqState.pages.length)}`;
+        if (prevBtn) prevBtn.disabled = idx <= 0;
+        if (nextBtn) nextBtn.disabled = idx >= seqState.pages.length - 1;
+        setTimeout(()=> {
+          const container = document.getElementById('love-pages-container');
+          if (container) container.scrollIntoView({behavior:'smooth', block:'center'});
+        }, 120);
+      }
+
+      // Navegação/fecho
+      window.previousPage = window.previousPage || function() {
+        if (seqState.currentPage > 0) { seqState.currentPage--; showPage(seqState.currentPage); }
+      };
+      window.nextPage = window.nextPage || function() {
+        if (seqState.currentPage < seqState.pages.length - 1) { seqState.currentPage++; showPage(seqState.currentPage); }
+      };
+      window.closeLovePages = window.closeLovePages || function() {
+        const c = document.getElementById('love-pages-container');
+        if (c) { c.classList.add('love-pages-hidden'); c.setAttribute('aria-hidden','true'); }
+      };
+
+      // Sequência pedida: pergunta -> número fictício -> comparações -> mensagem fofa -> abrir páginas
+      window.runSequence = async function() {
+        if (seqState.running) return;
+        showOverlay();
+        await new Promise(r => setTimeout(r, 150)); // garantir render do overlay
+        // 1) Pergunta
+        await typeText('Sabes quantas vezes disseste "Amo-te Muito Ivan"?', 40);
+        if (seqState.skipped) { hideOverlay(); return; }
+        await new Promise(r=>setTimeout(r, 450));
+        await eraseText(24);
+        if (seqState.skipped) { hideOverlay(); return; }
+        // 2) Número fictício
+        setSeqHTML(`<span class="seq-number" aria-live="polite">${fakeNumber}</span><div style="font-size:12px;color:#666;margin-top:6px;">vezes</div>`);
+        const numEl = document.querySelector('.seq-number');
+        if (numEl) numEl.animate([{ transform: 'scale(0.6)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }], { duration: 700, easing:'cubic-bezier(.2,.8,.2,1)' });
+        await new Promise(r=>setTimeout(r, 900));
+        if (seqState.skipped) { hideOverlay(); return; }
+        // 3) Comparações (3 linhas)
+        await showLines([
+          "Mais doce que chocolate quente num dia frio.",
+          "Mais brilhante que a primeira estrela da noite.",
+          "Mais calma que um abraço ao fim do dia."
+        ]);
+        await new Promise(r=>setTimeout(r, 800));
+        if (seqState.skipped) { hideOverlay(); return; }
+        // 4) Mensagem fofa
+        setSeqHTML(`<div style="font-weight:700;color:#c83a6f;">És o meu sorriso diário 💕</div>`);
+        await new Promise(r=>setTimeout(r, 1000));
+        // 5) Preparar e abrir páginas
+        populatePagesWithRepeats(fakeNumber);
+        hideOverlay();
+        const container = document.getElementById('love-pages-container');
+        if (container) {
+          container.classList.remove('love-pages-hidden');
+          container.setAttribute('aria-hidden','false');
+          if (window.innerWidth <= 480) {
+            setTimeout(()=> container.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+          }
+        }
+      };
+
+      // Alias novo e explícito para iniciar sequência (evita conflitos)
+      window.openSequenceEntry = function() { runSequence(); };
+
+      // Garantir botão visível e acessível
+      document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('digital-gift-btn');
+        if (!btn) return;
+        btn.style.display = 'block';
+        btn.style.visibility = 'visible';
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        if (!btn.hasAttribute('role')) btn.setAttribute('role','button');
+        if (!btn.hasAttribute('tabindex')) btn.setAttribute('tabindex','0');
+        // Listener em captura: impede qualquer outro handler de abrir o caderno diretamente
+        btn.addEventListener('click', function(e){
+          e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+          window.openSequenceEntry();
+        }, { capture: true });
+        btn.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.openSequenceEntry(); }
+        });
+      });
+    })();
+  </script>
+
+  <!-- Guard: se o botão for removido/ocultado por outro script/CSS, recria e mantém visível -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      function attachBtnHandlers(btn){
+        // limpar onclick legado, se existir
+        try { btn.onclick = null; } catch(_) {}
+        btn.addEventListener('click', function(e){
+          e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+          if (typeof window.openSequenceEntry === 'function') window.openSequenceEntry();
+        }, { capture: true });
+        btn.addEventListener('keydown', function(e){
+          if (e.key==='Enter' || e.key===' ') {
+            e.preventDefault();
+            if (typeof window.openSequenceEntry === 'function') window.openSequenceEntry();
+          }
+        });
+      }
+      function ensureBtn() {
+        let btn = document.getElementById('digital-gift-btn');
+        if (!btn) {
+          const sec = document.querySelector('section.digital-gift') || document.body;
+          btn = document.createElement('div');
+          btn.id = 'digital-gift-btn';
+          btn.className = 'digital-gift-title clickable-title';
+          btn.setAttribute('role','button');
+          btn.setAttribute('tabindex','0');
+          btn.textContent = 'Amo-te Muito Marta/Maria❤️';
+          sec.appendChild(btn);
+        }
+        // forçar visibilidade
+        btn.style.display = 'block';
+        btn.style.visibility = 'visible';
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        attachBtnHandlers(btn);
+      }
+      ensureBtn();
+      // observar remoções/alterações no DOM e repor o botão caso desapareça
+      new MutationObserver(ensureBtn).observe(document.body, { childList: true, subtree: true });
     });
   </script>
 </body>
