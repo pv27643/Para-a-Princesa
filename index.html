@@ -268,6 +268,31 @@
         margin-right: 6px !important;      /* espaço curto entre número e label */
       }
     }
+
+    /* Deixar o timer mais alto no mobile */
+    @media (max-width: 480px) {
+      .counter-container .timer {
+        padding: 18px 16px !important;   /* altura extra */
+        line-height: 1.3 !important;     /* ligeiro aumento da altura da linha */
+        border-radius: 16px !important;  /* mantém o formato */
+      }
+    }
+
+    /* Evitar overflow: no mobile, permitir wrap entre pares e limitar largura */
+    @media (max-width: 480px) {
+      .counter-container { width: 100% !important; }
+      .timer {
+        max-width: 100% !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;     /* permite 2 linhas se precisar */
+        white-space: normal !important;  /* deixa quebrar entre pares */
+        column-gap: 8px;                 /* espaço lateral entre pares */
+        row-gap: 2px;                    /* espaço vertical se quebrar */
+        font-size: clamp(14px, 4vw, 16px);
+        padding: 12px 14px !important;   /* fundo um pouco mais alto */
+        border-radius: 14px !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -287,10 +312,11 @@
     </div>
     <div class="counter-container">
       <div class="timer" role="timer" aria-live="off">
-        <span id="days">00</span> dias
-        <span id="hours">00</span> hrs
-        <span id="minutes">00</span> mins
-        <span id="seconds">00</span> secs
+        <!-- manter número + label juntos; permitir quebra entre pares -->
+        <span id="days">00</span>&nbsp;dias 
+        <span id="hours">00</span>&nbsp;hrs 
+        <span id="minutes">00</span>&nbsp;mins 
+        <span id="seconds">00</span>&nbsp;secs
       </div>
     </div>
   </main>
