@@ -115,6 +115,40 @@
     @media (prefers-reduced-motion: reduce) {
       .digital-gift-title { transition: none; }
     }
+
+    /* Widget do pato (contador flutuante) */
+    .duck-counter {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      color: #333;
+      border: 1px solid #ffd7e2;
+      border-radius: 999px;
+      box-shadow: 0 8px 22px rgba(200,58,111,.18);
+      cursor: pointer;
+      user-select: none;
+      z-index: 9999;
+      font-weight: 700;
+      font-size: 15px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .duck-counter:focus-visible {
+      outline: 3px solid rgba(255,107,143,.35);
+      outline-offset: 2px;
+    }
+    .duck-counter:active { transform: translateY(1px); }
+    .duck-emoji { font-size: 20px; line-height: 1; }
+    .duck-count { min-width: 1.5ch; text-align: right; color: #c83a6f; }
+
+    @media (max-width: 480px) {
+      .duck-counter { right: 12px; bottom: 12px; padding: 9px 11px; font-size: 14px; }
+      .duck-emoji { font-size: 19px; }
+    }
   </style>
 </head>
 <body>
@@ -208,6 +242,12 @@
         <button onclick="nextPage()" class="nav-btn" id="next-btn" aria-label="Próxima página" tabindex="0">Próxima →</button>
       </div>
     </div>
+  </div>
+
+  <!-- Contador do pintainho: mude data-persist para "false" se quiser que reinicie a cada refresh -->
+  <div id="duck-counter" class="duck-counter" role="button" aria-label="Contador do pintainho" tabindex="0" data-persist="true">
+    <span class="duck-emoji" aria-hidden="true">🐥</span>
+    <span id="duck-count" class="duck-count">0</span>
   </div>
 
   <script defer src="script.js"></script>
@@ -541,6 +581,53 @@
         img.decoding = 'async';
         img.setAttribute('fetchpriority', idx === 0 ? 'high' : 'low');
         carousel.appendChild(img);
+      });
+    })();
+  </script>
+
+  <!-- Lógica do contador do pato (sem base de dados; usa localStorage opcionalmente) -->
+  <script>
+    (function(){
+      document.addEventListener('DOMContentLoaded', function(){
+        const widget = document.getElementById('duck-counter');
+        if (!widget) return;
+
+        const countEl = document.getElementById('duck-count');
+        const persist = (widget.getAttribute('data-persist') || 'true') === 'true';
+        const KEY = 'duckCounter:v1';
+
+        let count = 0;
+        if (persist) {
+          const saved = localStorage.getItem(KEY);
+          count = saved ? (parseInt(saved, 10) || 0) : 0;
+        }
+
+        function render() { countEl.textContent = String(count); }
+        function bump() {
+          count++;
+          if (persist) localStorage.setItem(KEY, String(count));
+          render();
+          try {
+            widget.animate(
+              [{ transform: 'scale(1)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }],
+              { duration: 180, easing: 'ease-out' }
+            );
+          } catch(_) {}
+        }
+
+        render();
+        widget.addEventListener('click', e => { e.preventDefault(); bump(); });
+        widget.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bump(); }
+        });
+
+        // Reset rápido com botão direito (opcional)
+        widget.addEventListener('contextmenu', e => {
+          e.preventDefault();
+          count = 0;
+          if (persist) localStorage.setItem(KEY, '0');
+          render();
+        });
       });
     })();
   </script>
