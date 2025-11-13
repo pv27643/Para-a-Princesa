@@ -1,0 +1,90 @@
+/* Estilos do modal de perdão */
+.forgive-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000000;
+}
+
+.forgive-modal-content {
+  background: linear-gradient(180deg,#fff7fb,#fff);
+  border-radius: 14px;
+  padding: 18px 20px 14px 20px;
+  max-width: 420px;
+  width: calc(100% - 40px);
+  text-align: center;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+  position: relative;
+}
+
+.forgive-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #c2185b;
+  margin: 6px 0 14px 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.forgive-subtext {
+  display: block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #8a1f48;
+  margin-top: 6px;
+}
+
+.forgive-buttons {
+  position: relative;
+  height: 56px; /* espaço para os botões se moverem */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.forgive-yes, .forgive-no {
+  padding: 10px 18px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.forgive-yes {
+  background: #c2185b;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(194,32,91,0.28);
+}
+
+.forgive-no {
+  background: #fff;
+  color: #c2185b;
+  border: 2px solid #ffdce6;
+  position: absolute; /* movível */
+  left: calc(50% + 80px);
+  transform: translate(-50%, 0);
+  transition: transform 0.18s ease, left 0.18s ease, top 0.18s ease;
+}
+
+.forgive-image {
+  margin-top: 12px;
+}
+
+.forgive-image img {
+  max-width: 220px;
+  width: 60%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* tornar modal responsivo */
+@media (max-width: 480px) {
+  .forgive-modal-content { max-width: 92vw; padding: 14px; }
+  .forgive-text { font-size: 1.3rem; }
+  .forgive-image img { width: 70%; }
+}

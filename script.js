@@ -190,3 +190,77 @@ document.addEventListener('keydown', function(event) {
 // ======================
 document.documentElement.classList.add('js-loaded');
 
+// ======================
+// Modal de perdão: abre no load, 'Não' foge quando se tenta clicar
+// ======================
+(function initForgiveModal(){
+    const modal = document.getElementById('forgive-modal');
+    const yesBtn = document.getElementById('forgive-yes');
+    const noBtn = document.getElementById('forgive-no');
+    const btnContainer = document.getElementById('forgive-buttons');
+    if (!modal || !yesBtn || !noBtn || !btnContainer) return;
+
+    function showModal() {
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
+    }
+    function hideModal() {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    // abrir sempre que a página carregar
+    window.addEventListener('load', showModal);
+
+    // fechar apenas com 'Sim'
+    yesBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        // Tentar iniciar a música de fundo quando o utilizador dá permissão (gesto do utilizador)
+        try {
+            const bgAudio = document.getElementById('bg-audio');
+            if (bgAudio) {
+                const playPromise = bgAudio.play();
+                if (playPromise && playPromise.catch) {
+                    playPromise.catch(() => {
+                        // Alguns browsers bloqueiam autoplay; a música não irá tocar automaticamente
+                    });
+                }
+            }
+        } catch (err) {
+            // ignorar erros de reprodução
+            console.warn('Erro ao tentar reproduzir música de fundo:', err);
+        }
+
+        hideModal();
+    });
+
+    // função que move o botão 'Não' para uma posição aleatória dentro do container
+    function moveNoButton() {
+        const containerRect = btnContainer.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+
+        const maxX = Math.max(0, containerRect.width - btnRect.width);
+        const maxY = Math.max(0, containerRect.height - btnRect.height);
+
+        const randX = Math.floor(Math.random() * (maxX + 1));
+        const randY = Math.floor(Math.random() * (maxY + 1));
+
+        // aplicar posição relativa ao container (botão é absolute)
+        noBtn.style.left = randX + 'px';
+        noBtn.style.top = randY + 'px';
+        // efeito rápido
+        noBtn.style.transform = 'translate(0, 0)';
+    }
+
+    // mover quando o rato entra e quando se tenta clicar
+    noBtn.addEventListener('mouseenter', function () { moveNoButton(); });
+    noBtn.addEventListener('click', function (e) { e.preventDefault(); moveNoButton(); });
+    noBtn.addEventListener('touchstart', function (e) { e.preventDefault(); moveNoButton(); }, { passive: false });
+
+    // Garantir layout inicial: centra o botão 'Sim' e arruma o 'Não' ao lado
+    yesBtn.style.position = 'relative';
+    // define um posicionamento inicial visível para o botão 'Não'
+    noBtn.style.left = '60%';
+    noBtn.style.top = '0px';
+})();
+

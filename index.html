@@ -8,6 +8,7 @@
   <meta name="description" content="Versão original do contador de dias e memórias." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="forgive.css" />
   <meta property="og:title" content="Amo-te Marta" />
   <meta property="og:description" content="Dias juntos e memórias especiais." />
   <meta property="og:type" content="website" />
@@ -296,6 +297,19 @@
   </style>
 </head>
 <body>
+  <!-- Modal de pedido de perdão - abre automaticamente -->
+  <div id="forgive-modal" class="forgive-modal" role="dialog" aria-modal="true" aria-label="Pedido de perdão" aria-hidden="false">
+    <div class="forgive-modal-content">
+    <p class="forgive-text"><strong>Perdoa-me, Marta.</strong><br /><span class="forgive-subtext">Por favor...</span></p>
+      <div class="forgive-buttons" id="forgive-buttons">
+        <button id="forgive-yes" class="forgive-yes">Sim</button>
+        <button id="forgive-no" class="forgive-no">Não</button>
+      </div>
+      <div class="forgive-image">
+        <img src="assets/images/Hamster.jpg" alt="Hamster" id="hamster-img" />
+      </div>
+    </div>
+  </div>
   <!-- Container para animação de corações -->
   <div class="hearts-explosion" id="heartsContainer"></div>
   
@@ -398,6 +412,12 @@
   <script defer src="script.js"></script>
   <script>
     // Animação de explosão de corações ao carregar
+
+  <!-- Background music element (place your MP3 at assets/audio/musica.mp3 or change the src) -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="assets/audio/musica.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
         const heartsContainer = document.getElementById('heartsContainer');
