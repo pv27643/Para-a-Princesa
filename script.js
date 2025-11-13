@@ -214,8 +214,8 @@ document.documentElement.classList.add('js-loaded');
     document.addEventListener('DOMContentLoaded', showModal);
 
     // fechar apenas com 'Sim'
-    yesBtn.addEventListener('click', function (e) {
-        e.preventDefault();
+    function handleYes(e) {
+        if (e && e.preventDefault) e.preventDefault();
         // Tentar iniciar a música de fundo quando o utilizador dá permissão (gesto do utilizador)
         try {
             const bgAudio = document.getElementById('bg-audio');
@@ -233,7 +233,10 @@ document.documentElement.classList.add('js-loaded');
         }
 
         hideModal();
-    });
+    }
+    yesBtn.addEventListener('click', handleYes);
+    yesBtn.addEventListener('pointerdown', handleYes);
+    yesBtn.addEventListener('touchend', handleYes, { passive: false });
 
     // função que move o botão 'Não' para uma posição aleatória (mais agressiva em mobile)
     function moveNoButton() {
@@ -279,8 +282,9 @@ document.documentElement.classList.add('js-loaded');
 
     // mover quando o ponteiro/touch interage; usar pointer events para cobrir desktop + touch
     noBtn.addEventListener('pointerenter', moveNoButton);
-    noBtn.addEventListener('pointerdown', function (e) { e.preventDefault(); moveNoButton(); }, { passive: false });
-    noBtn.addEventListener('click', function (e) { e.preventDefault(); moveNoButton(); });
+    noBtn.addEventListener('pointerdown', function (e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); }, { passive: false });
+    noBtn.addEventListener('touchend', function (e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); }, { passive: false });
+    noBtn.addEventListener('click', function (e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); });
 
     // Garantir layout inicial: centra o botão 'Sim' e arruma o 'Não' ao lado
     yesBtn.style.position = 'relative';

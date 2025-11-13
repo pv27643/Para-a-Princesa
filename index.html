@@ -409,15 +409,14 @@
     <span id="duck-count" class="duck-count">0</span>
   </div>
 
-  <script defer src="script.js"></script>
-  <script>
-    // Animação de explosão de corações ao carregar
-
   <!-- Background music element (place your MP3 at assets/audio/musica.mp3 or change the src) -->
   <audio id="bg-audio" loop preload="auto">
     <source src="assets/audio/musica.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
   </audio>
+  <script defer src="script.js"></script>
+  <script>
+    // Animação de explosão de corações ao carregar
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
         const heartsContainer = document.getElementById('heartsContainer');
