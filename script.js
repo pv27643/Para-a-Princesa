@@ -209,8 +209,9 @@ document.documentElement.classList.add('js-loaded');
         modal.setAttribute('aria-hidden', 'true');
     }
 
-    // abrir sempre que a página carregar
+    // abrir sempre que a página carregar (tenta cobrir mais casos em mobile)
     window.addEventListener('load', showModal);
+    document.addEventListener('DOMContentLoaded', showModal);
 
     // fechar apenas com 'Sim'
     yesBtn.addEventListener('click', function (e) {
@@ -234,28 +235,52 @@ document.documentElement.classList.add('js-loaded');
         hideModal();
     });
 
-    // função que move o botão 'Não' para uma posição aleatória dentro do container
+    // função que move o botão 'Não' para uma posição aleatória (mais agressiva em mobile)
     function moveNoButton() {
-        const containerRect = btnContainer.getBoundingClientRect();
         const btnRect = noBtn.getBoundingClientRect();
+        const modalContent = modal.querySelector('.forgive-modal-content') || modal;
+        const modalRect = modalContent.getBoundingClientRect();
 
-        const maxX = Math.max(0, containerRect.width - btnRect.width);
-        const maxY = Math.max(0, containerRect.height - btnRect.height);
+        // Se estamos em ecrã pequeno, usar posições fixed para fugir além do pequeno container
+        const isSmall = window.innerWidth <= 480;
+        let randX, randY;
 
-        const randX = Math.floor(Math.random() * (maxX + 1));
-        const randY = Math.floor(Math.random() * (maxY + 1));
+        if (isSmall) {
+            // permitir movimento por quase todo o ecrã, mas manter dentro dos limites do modal visual
+            const padding = 12;
+            const minX = padding;
+            const maxX = Math.max(padding, window.innerWidth - btnRect.width - padding);
+            const minY = Math.max(padding, modalRect.top + padding);
+            const maxY = Math.max(minY, Math.min(window.innerHeight - btnRect.height - padding, modalRect.bottom - btnRect.height - padding));
 
-        // aplicar posição relativa ao container (botão é absolute)
-        noBtn.style.left = randX + 'px';
-        noBtn.style.top = randY + 'px';
-        // efeito rápido
+            randX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+            randY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = randX + 'px';
+            noBtn.style.top = randY + 'px';
+        } else {
+            // desktop: manter relativo ao container de botões
+            const containerRect = btnContainer.getBoundingClientRect();
+            const maxX = Math.max(0, containerRect.width - btnRect.width);
+            const maxY = Math.max(0, containerRect.height - btnRect.height);
+
+            randX = Math.floor(Math.random() * (maxX + 1));
+            randY = Math.floor(Math.random() * (maxY + 1));
+
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = randX + 'px';
+            noBtn.style.top = randY + 'px';
+        }
+
+        // efeito visual
         noBtn.style.transform = 'translate(0, 0)';
     }
 
-    // mover quando o rato entra e quando se tenta clicar
-    noBtn.addEventListener('mouseenter', function () { moveNoButton(); });
+    // mover quando o ponteiro/touch interage; usar pointer events para cobrir desktop + touch
+    noBtn.addEventListener('pointerenter', moveNoButton);
+    noBtn.addEventListener('pointerdown', function (e) { e.preventDefault(); moveNoButton(); }, { passive: false });
     noBtn.addEventListener('click', function (e) { e.preventDefault(); moveNoButton(); });
-    noBtn.addEventListener('touchstart', function (e) { e.preventDefault(); moveNoButton(); }, { passive: false });
 
     // Garantir layout inicial: centra o botão 'Sim' e arruma o 'Não' ao lado
     yesBtn.style.position = 'relative';
