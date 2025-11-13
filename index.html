@@ -302,8 +302,8 @@
     <div class="forgive-modal-content">
     <p class="forgive-text"><strong>Perdoa-me, Marta.</strong><br /><span class="forgive-subtext">Por favor...</span></p>
       <div class="forgive-buttons" id="forgive-buttons">
-        <button id="forgive-yes" class="forgive-yes">Sim</button>
-        <button id="forgive-no" class="forgive-no">Não</button>
+        <button id="forgive-yes" class="forgive-yes" onclick="window.forgiveYesClick && window.forgiveYesClick(event)">Sim</button>
+        <button id="forgive-no" class="forgive-no" onclick="window.forgiveNoClick && window.forgiveNoClick(event)">Não</button>
       </div>
       <div class="forgive-image">
         <img src="assets/images/Hamster.jpg" alt="Hamster" id="hamster-img" />

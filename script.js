@@ -237,6 +237,8 @@ document.documentElement.classList.add('js-loaded');
     yesBtn.addEventListener('click', handleYes);
     yesBtn.addEventListener('pointerdown', handleYes);
     yesBtn.addEventListener('touchend', handleYes, { passive: false });
+    // Expor função no window para fallback via onclick inline (compatibilidade iOS Safari)
+    window.forgiveYesClick = handleYes;
 
     // função que move o botão 'Não' para uma posição aleatória (mais agressiva em mobile)
     function moveNoButton() {
@@ -285,6 +287,8 @@ document.documentElement.classList.add('js-loaded');
     noBtn.addEventListener('pointerdown', function (e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); }, { passive: false });
     noBtn.addEventListener('touchend', function (e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); }, { passive: false });
     noBtn.addEventListener('click', function (e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); });
+    // Expor função no window para fallback via onclick inline
+    window.forgiveNoClick = function(e) { if (e && e.preventDefault) e.preventDefault(); moveNoButton(); };
 
     // Garantir layout inicial: centra o botão 'Sim' e arruma o 'Não' ao lado
     yesBtn.style.position = 'relative';
