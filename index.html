@@ -8,116 +8,39 @@
   <meta name="description" content="Versão original do contador de dias e memórias." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="forgive.css" />
   <meta property="og:title" content="Amo-te Marta" />
   <meta property="og:description" content="Dias juntos e memórias especiais." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/IMG_2714.jpg" />
   <style>
-    /* Overlay e animações para a sequência de amor (mantém apenas o essencial) */
-    .overlay.hidden { display: none; }
-    .overlay {
+    /* Decoração de Natal: flocos de neve caindo */
+    @keyframes snowfall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    @keyframes sway {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(30px); }
+    }
+
+    .snowflake {
       position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0,0,0,0.6);
-      z-index: 999999; /* acima de tudo */
-      padding: 20px;
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
-    }
-    .overlay-content {
-      background: linear-gradient(180deg,#fff5f8,#fff);
-      border-radius: 14px;
-      padding: 20px;
-      max-width: 520px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
-      position: relative;
-    }
-
-    /* Botão 'Amo-te...' — visual de botão, acessível e responsivo */
-    .digital-gift-title {
-      display: block;
-      width: calc(100% - 32px);
-      max-width: 520px;
-      margin: 10px auto 14px;
-      padding: 12px 16px;
-      text-align: center;
-      color: #c83a6f;
-      background: #fff6f8;
-      border: 1px solid #ffd7e2;
-      border-radius: 12px;
-      font-size: 17px;
-      font-weight: 700;
-      box-shadow: 0 4px 14px rgba(0,0,0,.06);
-      cursor: pointer;
-      transition: transform .12s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
-      outline: none;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .digital-gift-title:hover {
-      background: #fff2f6;
-      border-color: #ffc8d8;
-      box-shadow: 0 6px 18px rgba(0,0,0,.08);
-      transform: translateY(-1px);
-    }
-    .digital-gift-title:active {
-      transform: translateY(0);
-      box-shadow: 0 3px 10px rgba(0,0,0,.06);
-    }
-    .digital-gift-title:focus-visible {
-      box-shadow: 0 0 0 3px rgba(255,107,143,.35), 0 6px 16px rgba(0,0,0,.08);
-    }
-    .digital-gift-title.is-busy {
-      opacity: .85;
-      cursor: default;
+      top: -10vh;
+      font-size: 1.5rem;
+      opacity: 0.8;
+      z-index: 1;
       pointer-events: none;
-      background: #fff7f9;
-      border-color: #ffe2ea;
+      animation: snowfall linear forwards;
+      will-change: transform;
     }
 
-    /* Forçar a aparecer mesmo que CSS externo esconda */
-    .digital-gift { display:block !important; position:relative; z-index:2; }
-    .digital-gift-title, .clickable-title { display:block !important; visibility:visible !important; opacity:1 !important; }
-
-    /* Formato do carrossel: altura responsiva e recorte uniforme das fotos */
-    .center-image-container { display: flex; justify-content: center; }
-    .carousel {
-      width: min(92vw, 640px);
-      height: clamp(220px, 45vh, 520px);
-      position: relative;
-      overflow: hidden;
-      border-radius: 16px;
-      background: #f7f7f7;
-      box-shadow: 0 10px 26px rgba(0,0,0,.08);
-    }
-    .carousel .carousel-image {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;         /* ajusta/recorta a foto */
-      object-position: center;   /* centra a foto */
-      opacity: 0;
-      transition: opacity .35s ease;
-      border-radius: inherit;
-      will-change: opacity;
-      -webkit-user-drag: none; user-select: none;
-    }
-    .carousel .carousel-image.active { opacity: 1; }
-
-    @media (max-width: 480px) {
-      .carousel { height: clamp(220px, 52vw, 380px); border-radius: 12px; }
+    /* efeito de balouço (oscilação horizontal) */
+    .snowflake.sway {
+      animation: snowfall linear forwards, sway 3s ease-in-out infinite;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .digital-gift-title { transition: none; }
-    }
-
-    /* Widget do pintainho (contador flutuante) */
+    /* Estilo do pintainho (duck-counter) - flutuante no canto direito */
     .duck-counter {
       position: fixed;
       right: 16px;
@@ -151,167 +74,44 @@
       .duck-emoji { font-size: 19px; }
     }
 
-    /* Fix: reduzir espaço entre carrossel e contador no telemóvel */
-    @media (max-width: 480px) {
-      main.container {
-        display: grid !important;
-        row-gap: 8px !important;     /* controla o espaço entre secções */
-        margin: 0 !important;
-        padding: 0 0 8px 0 !important;
-      }
-      main.container > * {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important; /* elimina margens dos filhos */
-      }
-      .center-image-container {
-        margin: 0 auto !important;
-        padding: 0 !important;
-      }
-      .carousel {
-        margin: 0 !important;
-      }
-      .counter-container {
-        margin: 0 !important;
-        padding: 2px 0 0 0 !important; /* encosta ao carrossel */
-      }
-      .timer {
-        margin: 0 !important;
-        line-height: 1.15 !important;
-      }
+    /* Laço decorativo no canto superior esquerdo do carrossel */
+    .ribbon-bow {
+      position: absolute;
+      top: -55px;
+      left: -50px;
+      font-size: 9rem;
+      z-index: 10;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+      animation: gentle-bounce 3s ease-in-out infinite;
+      pointer-events: none;
+      transform-origin: center center;
     }
-
-    /* Hard override: reduzir o espaço entre carrossel e contador no telemóvel */
-    @media (max-width: 480px) {
-      /* remove qualquer min-height/padding sobrante */
-      .center-image-container,
-      .counter-container {
-        min-height: 0 !important;
-        padding-bottom: 0 !important;
-      }
-
-      /* zera margens de todos os envolvidos */
-      .center-image-container,
-      .carousel,
-      .counter-container,
-      .counter-container .timer {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-      }
-
-      /* aplica apenas 8px entre o carrossel e o contador */
-      .center-image-container + .counter-container {
-        margin-top: 8px !important;
-      }
+    
+    @keyframes gentle-bounce {
+      0%, 100% { transform: translateY(0) rotate(-25deg); }
+      50% { transform: translateY(-5px) rotate(-28deg); }
     }
-
-    /* Mobile: tornar o carrossel maior e consistente + reduzir espaço até ao contador */
-    @media (max-width: 480px) {
-      /* largura quase a ecrã inteiro e altura por ratio (mais alto que 52vw) */
-      #dynamic-carousel {
-        width: 96vw !important;
-        max-width: 640px;
-        height: auto !important;
-        aspect-ratio: 4 / 5;          /* mais alto em telemóvel */
-        border-radius: 12px !important;
-        margin: 0 auto !important;
-      }
-      #dynamic-carousel .carousel-image {
-        inset: 0;                      /* garante cobertura total */
-        object-fit: cover;
-        object-position: center;
-      }
-
-      .center-image-container {
-        width: 100%;
-        padding: 0 !important;
-        margin: 0 auto !important;
-      }
-      /* espaço controlado entre carrossel e contador */
-      .center-image-container + .counter-container {
-        margin-top: 8px !important;
-      }
-      .counter-container, .timer {
-        margin: 0 !important;
-        padding: 0 !important;
-        line-height: 1.15 !important;
-      }
-    }
-
-    /* Contador: forçar layout horizontal e evitar quebras */
-    .timer {
-      display: inline-flex !important;
-      align-items: baseline;
-      gap: 8px;
-      white-space: nowrap; /* tudo na mesma linha */
-    }
-    .timer > span { display: inline !important; }
 
     @media (max-width: 480px) {
-      .timer { gap: 6px; font-size: 15px; }
+      .ribbon-bow { font-size: 6.5rem; top: -40px; left: -35px; }
     }
 
-    /* Contador: menos espaço entre números e fundo um pouco mais alto */
-    .timer {
-      gap: 4px !important; /* reduzir no desktop */
-    }
-    /* Mobile: remover gap e usar pequeno espaçamento após cada número; aumentar altura do fundo */
-    @media (max-width: 480px) {
-      .timer {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 0 !important;                 /* elimina grandes espaços */
-        padding: 12px 16px !important;     /* fundo mais alto/visível */
-        border-radius: 14px !important;    /* mantém pílula bonita */
-        white-space: nowrap;
-      }
-      .timer > span {
-        display: inline !important;
-        margin-right: 6px !important;      /* espaço curto entre número e label */
-      }
-    }
+    /* Garantir que o carrossel tenha position relative e overflow visible */
+    .carousel { position: relative; overflow: visible !important; }
 
-    /* Deixar o timer mais alto no mobile */
-    @media (max-width: 480px) {
-      .counter-container .timer {
-        padding: 18px 16px !important;   /* altura extra */
-        line-height: 1.3 !important;     /* ligeiro aumento da altura da linha */
-        border-radius: 16px !important;  /* mantém o formato */
-      }
-    }
-
-    /* Evitar overflow: no mobile, permitir wrap entre pares e limitar largura */
-    @media (max-width: 480px) {
-      .counter-container { width: 100% !important; }
-      .timer {
-        max-width: 100% !important;
-        justify-content: center !important;
-        flex-wrap: wrap !important;     /* permite 2 linhas se precisar */
-        white-space: normal !important;  /* deixa quebrar entre pares */
-        column-gap: 8px;                 /* espaço lateral entre pares */
-        row-gap: 2px;                    /* espaço vertical se quebrar */
-        font-size: clamp(14px, 4vw, 16px);
-        padding: 12px 14px !important;   /* fundo um pouco mais alto */
-        border-radius: 14px !important;
-      }
+    body {
+      position: relative;
+      overflow-x: hidden;
     }
   </style>
 </head>
 <body>
-  <!-- Modal de pedido de perdão - abre automaticamente -->
-  <div id="forgive-modal" class="forgive-modal" role="dialog" aria-modal="true" aria-label="Pedido de perdão" aria-hidden="false">
-    <div class="forgive-modal-content">
-    <p class="forgive-text"><strong>Perdoa-me, Marta.</strong><br /><span class="forgive-subtext">Por favor...</span></p>
-      <div class="forgive-buttons" id="forgive-buttons">
-        <button id="forgive-yes" class="forgive-yes" onclick="window.forgiveYesClick && window.forgiveYesClick(event)">Sim</button>
-        <button id="forgive-no" class="forgive-no" onclick="window.forgiveNoClick && window.forgiveNoClick(event)">Não</button>
-      </div>
-      <div class="forgive-image">
-        <img src="assets/images/Hamster.jpg" alt="Hamster" id="hamster-img" />
-      </div>
-    </div>
-  </div>
+
   <!-- Container para animação de corações -->
   <div class="hearts-explosion" id="heartsContainer"></div>
+  
+  <!-- Container para flocos de neve -->
+  <div id="snowContainer" aria-hidden="true"></div>
   
   <noscript><div style="background:#fff3f7;border:2px solid #ff6f91;padding:10px;border-radius:8px;max-width:400px;margin:10px auto;font-family:Arial,sans-serif;">Este site funciona melhor com JavaScript ativo ❤️</div></noscript>
   <header>
@@ -321,6 +121,8 @@
     <div class="center-image-container">
       <!-- Carrossel -->
       <div class="carousel" role="region" aria-label="Carrossel de fotos" aria-live="polite" id="dynamic-carousel">
+        <!-- Laço decorativo vermelho no canto da foto -->
+        <div class="ribbon-bow" aria-hidden="true">🎀</div>
         <!-- imagens serão inseridas por script -->
       </div>
     </div>
@@ -373,7 +175,6 @@
   <!-- Inserir overlay/sequence antes do container das páginas de amor -->
   <div id="love-sequence-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-label="Sequência de amor">
     <div class="overlay-content">
-      <button id="seq-skip" class="seq-skip" onclick="skipSequence()" aria-label="Pular sequência">Pular ✕</button>
       <div id="seq-text" class="seq-text" aria-live="polite"></div>
       <div id="seq-extra" style="margin-top:6px;"></div>
     </div>
@@ -793,6 +594,82 @@
           render();
         });
       });
+    })();
+  </script>
+
+  <!-- Script para gerar flocos de neve caindo -->
+  <script>
+    (function initChristmasSnow() {
+      const container = document.getElementById('snowContainer');
+      if (!container) return;
+
+      const snowEmojis = ['❄️']; // apenas flocos de neve branco
+      
+      function createSnowflake() {
+        const flake = document.createElement('div');
+        const emoji = snowEmojis[Math.floor(Math.random() * snowEmojis.length)];
+        flake.className = 'snowflake ' + (Math.random() > 0.5 ? 'sway' : '');
+        flake.textContent = emoji;
+        
+        // posição aleatória horizontal
+        const startX = Math.random() * 100;
+        flake.style.left = startX + '%';
+        
+        // duração aleatória (entre 8 e 16 segundos)
+        const duration = 8 + Math.random() * 8;
+        flake.style.animationDuration = duration + 's';
+        
+        // delay aleatório (para parecer mais natural)
+        const delay = Math.random() * 2;
+        flake.style.animationDelay = delay + 's';
+        
+        container.appendChild(flake);
+        
+        // remover o elemento após a animação terminar
+        setTimeout(() => flake.remove(), (duration + delay) * 1000);
+      }
+
+      // gerar um novo floco a cada 200ms (frequência)
+      setInterval(createSnowflake, 200);
+
+      // gerar alguns flocos no início para encher a tela
+      for (let i = 0; i < 15; i++) {
+        setTimeout(createSnowflake, i * 100);
+      }
+    })();
+  </script>
+
+  <!-- Efeito criativo extra: confete branco ocasional -->
+  <script>
+    (function initChristmasConfetti() {
+      const confettiEmojis = ['❄️']; // apenas flocos brancos
+      
+      function createConfetti() {
+        const confetti = document.createElement('div');
+        const emoji = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
+        confetti.textContent = emoji;
+        confetti.style.cssText = `
+          position: fixed;
+          font-size: ${1 + Math.random() * 1.5}rem;
+          left: ${Math.random() * 100}%;
+          top: -10vh;
+          z-index: 2;
+          pointer-events: none;
+          animation: snowfall ${5 + Math.random() * 5}s linear forwards;
+          opacity: ${0.5 + Math.random() * 0.5};
+        `;
+        document.body.appendChild(confetti);
+        
+        // remover após a animação
+        setTimeout(() => confetti.remove(), (10 + Math.random() * 5) * 1000);
+      }
+
+      // gerar confete aleatório a cada 5-8 segundos (evento especial)
+      setInterval(() => {
+        for (let i = 0; i < 3; i++) {
+          setTimeout(createConfetti, i * 100);
+        }
+      }, 5000 + Math.random() * 3000);
     })();
   </script>
 </body>
