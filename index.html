@@ -13,33 +13,6 @@
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/IMG_2714.jpg" />
   <style>
-    /* Decoração de Natal: flocos de neve caindo */
-    @keyframes snowfall {
-      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-    }
-    @keyframes sway {
-      0%, 100% { transform: translateX(0); }
-      50% { transform: translateX(30px); }
-    }
-
-    .snowflake {
-      position: fixed;
-      top: -10vh;
-      font-size: 1.5rem;
-      opacity: 0.8;
-      z-index: 1;
-      pointer-events: none;
-      animation: snowfall linear forwards;
-      will-change: transform;
-    }
-
-    /* efeito de balouço (oscilação horizontal) */
-    .snowflake.sway {
-      animation: snowfall linear forwards, sway 3s ease-in-out infinite;
-    }
-
     /* Estilo do pintainho (duck-counter) - flutuante no canto direito */
     .duck-counter {
       position: fixed;
@@ -74,31 +47,6 @@
       .duck-emoji { font-size: 19px; }
     }
 
-    /* Laço decorativo no canto superior esquerdo do carrossel */
-    .ribbon-bow {
-      position: absolute;
-      top: -55px;
-      left: -50px;
-      font-size: 9rem;
-      z-index: 10;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
-      animation: gentle-bounce 3s ease-in-out infinite;
-      pointer-events: none;
-      transform-origin: center center;
-    }
-    
-    @keyframes gentle-bounce {
-      0%, 100% { transform: translateY(0) rotate(-25deg); }
-      50% { transform: translateY(-5px) rotate(-28deg); }
-    }
-
-    @media (max-width: 480px) {
-      .ribbon-bow { font-size: 6.5rem; top: -40px; left: -35px; }
-    }
-
-    /* Garantir que o carrossel tenha position relative e overflow visible */
-    .carousel { position: relative; overflow: visible !important; }
-
     body {
       position: relative;
       overflow-x: hidden;
@@ -110,9 +58,6 @@
   <!-- Container para animação de corações -->
   <div class="hearts-explosion" id="heartsContainer"></div>
   
-  <!-- Container para flocos de neve -->
-  <div id="snowContainer" aria-hidden="true"></div>
-  
   <noscript><div style="background:#fff3f7;border:2px solid #ff6f91;padding:10px;border-radius:8px;max-width:400px;margin:10px auto;font-family:Arial,sans-serif;">Este site funciona melhor com JavaScript ativo ❤️</div></noscript>
   <header>
     <h1>Dias Juntos <span aria-hidden="true">❤️</span></h1>
@@ -121,8 +66,6 @@
     <div class="center-image-container">
       <!-- Carrossel -->
       <div class="carousel" role="region" aria-label="Carrossel de fotos" aria-live="polite" id="dynamic-carousel">
-        <!-- Laço decorativo vermelho no canto da foto -->
-        <div class="ribbon-bow" aria-hidden="true">🎀</div>
         <!-- imagens serão inseridas por script -->
       </div>
     </div>
@@ -136,19 +79,6 @@
       </div>
     </div>
   </main>
-
-  <section class="proposal" aria-label="Pedido de namoro">
-    <div class="proposal-card">
-      <h2 class="proposal-title">Queres namorar comigo?</h2>
-      <div id="proposal-lock" class="proposal-lock" aria-live="polite"></div>
-      <div id="proposal-area" class="proposal-area">
-        <button id="proposal-yes" class="proposal-btn yes" type="button">Sim</button>
-        <button id="proposal-no" class="proposal-btn no" type="button">Não</button>
-      </div>
-      <div id="proposal-message" class="proposal-message" aria-live="polite"></div>
-      <img class="proposal-illustration" src="assets/images/borboletas.png" alt="Borboletas" loading="lazy" />
-    </div>
-  </section>
 
   <section class="special-dates">
     <h2>Datas que faço questão de lembrar</h2>
@@ -173,6 +103,11 @@
         <div class="date-number">18</div>
         <div class="date-month">Outubro</div>
         <div class="date-description">Aniversário da Princesa</div>
+      </div>
+      <div class="date-card" data-date="12-26">
+        <div class="date-number">26</div>
+        <div class="date-month">Dezembro</div>
+        <div class="date-description">Dia do pedido de namoro</div>
       </div>
     </div>
   </section>
@@ -611,80 +546,5 @@
     })();
   </script>
 
-  <!-- Script para gerar flocos de neve caindo -->
-  <script>
-    (function initChristmasSnow() {
-      const container = document.getElementById('snowContainer');
-      if (!container) return;
-
-      const snowEmojis = ['❄️']; // apenas flocos de neve branco
-      
-      function createSnowflake() {
-        const flake = document.createElement('div');
-        const emoji = snowEmojis[Math.floor(Math.random() * snowEmojis.length)];
-        flake.className = 'snowflake ' + (Math.random() > 0.5 ? 'sway' : '');
-        flake.textContent = emoji;
-        
-        // posição aleatória horizontal
-        const startX = Math.random() * 100;
-        flake.style.left = startX + '%';
-        
-        // duração aleatória (entre 8 e 16 segundos)
-        const duration = 8 + Math.random() * 8;
-        flake.style.animationDuration = duration + 's';
-        
-        // delay aleatório (para parecer mais natural)
-        const delay = Math.random() * 2;
-        flake.style.animationDelay = delay + 's';
-        
-        container.appendChild(flake);
-        
-        // remover o elemento após a animação terminar
-        setTimeout(() => flake.remove(), (duration + delay) * 1000);
-      }
-
-      // gerar um novo floco a cada 200ms (frequência)
-      setInterval(createSnowflake, 200);
-
-      // gerar alguns flocos no início para encher a tela
-      for (let i = 0; i < 15; i++) {
-        setTimeout(createSnowflake, i * 100);
-      }
-    })();
-  </script>
-
-  <!-- Efeito criativo extra: confete branco ocasional -->
-  <script>
-    (function initChristmasConfetti() {
-      const confettiEmojis = ['❄️']; // apenas flocos brancos
-      
-      function createConfetti() {
-        const confetti = document.createElement('div');
-        const emoji = confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)];
-        confetti.textContent = emoji;
-        confetti.style.cssText = `
-          position: fixed;
-          font-size: ${1 + Math.random() * 1.5}rem;
-          left: ${Math.random() * 100}%;
-          top: -10vh;
-          z-index: 2;
-          pointer-events: none;
-          animation: snowfall ${5 + Math.random() * 5}s linear forwards;
-          opacity: ${0.5 + Math.random() * 0.5};
-        `;
-        document.body.appendChild(confetti);
-        
-        // remover após a animação
-        setTimeout(() => confetti.remove(), (10 + Math.random() * 5) * 1000);
-      }
-
-      // gerar confete aleatório a cada 5-8 segundos (evento especial)
-      setInterval(() => {
-        for (let i = 0; i < 3; i++) {
-          setTimeout(createConfetti, i * 100);
-        }
-      }, 5000 + Math.random() * 3000);
-    })();
-  </script>
 </body>
 </html>

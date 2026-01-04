@@ -1,0 +1,9 @@
+{
+  "name": "para-a-princesa",
+  "private": true,
+  "version": "0.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
