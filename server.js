@@ -48,7 +48,13 @@ const server = http.createServer((req, res) => {
     }
 
     const ext = path.extname(filePath).toLowerCase();
-    res.writeHead(200, { 'Content-Type': mimeByExt[ext] || 'application/octet-stream' });
+    res.writeHead(200, {
+      'Content-Type': mimeByExt[ext] || 'application/octet-stream',
+      // iOS/Safari pode agarrar cache com força; para dev queremos sempre fresh
+      'Cache-Control': 'no-store, max-age=0, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
     res.end(data);
   });
 });

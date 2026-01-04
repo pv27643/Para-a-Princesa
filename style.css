@@ -1428,6 +1428,12 @@ video.playing {
 /* =============================
    Calendário dos pintainhos
    ============================= */
+.duck-calendar-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .duck-calendar {
     display: block;
     margin: 26px auto 0;
