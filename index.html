@@ -521,9 +521,25 @@
         if (!widget) return;
 
         const countEl = document.getElementById('duck-count');
-        const persist = (widget.getAttribute('data-persist') || 'true') === 'true';
+        const persistAttr = (widget.getAttribute('data-persist') || 'true') === 'true';
         const KEY = 'duckCounter:v1';
         const DAYS_KEY = 'duckCounterDays:v1';
+
+        // iOS/Safari/WebViews podem bloquear localStorage (ex.: modo privado)
+        let storageOk = false;
+        let storage = null;
+        try {
+          storage = window.localStorage;
+          const testKey = '__duck_storage_test__';
+          storage.setItem(testKey, '1');
+          storage.removeItem(testKey);
+          storageOk = true;
+        } catch (_) {
+          storageOk = false;
+          storage = null;
+        }
+
+        const persist = persistAttr && storageOk;
 
         const calGrid = document.getElementById('duck-cal-grid');
         const calTitle = document.getElementById('duck-cal-title');
@@ -538,7 +554,7 @@
         function loadDaysMap() {
           if (!persist) return {};
           try {
-            const raw = localStorage.getItem(DAYS_KEY);
+            const raw = storage.getItem(DAYS_KEY);
             const obj = raw ? JSON.parse(raw) : {};
             return (obj && typeof obj === 'object') ? obj : {};
           } catch (_) {
@@ -548,7 +564,7 @@
 
         function saveDaysMap(map) {
           if (!persist) return;
-          try { localStorage.setItem(DAYS_KEY, JSON.stringify(map)); } catch (_) {}
+          try { storage.setItem(DAYS_KEY, JSON.stringify(map)); } catch (_) {}
         }
 
         let daysMap = loadDaysMap();
@@ -607,7 +623,8 @@
 
         let count = 0;
         if (persist) {
-          const saved = localStorage.getItem(KEY);
+          let saved = null;
+          try { saved = storage.getItem(KEY); } catch (_) { saved = null; }
           count = saved ? (parseInt(saved, 10) || 0) : 0;
         }
 
@@ -616,11 +633,11 @@
         function resetDucks() {
           count = 0;
           if (persist) {
-            try { localStorage.setItem(KEY, '0'); } catch (_) {}
+            try { storage.setItem(KEY, '0'); } catch (_) {}
           }
           daysMap = {};
           if (persist) {
-            try { localStorage.removeItem(DAYS_KEY); } catch (_) {}
+            try { storage.removeItem(DAYS_KEY); } catch (_) {}
           }
           render();
           renderCalendar();
@@ -644,7 +661,9 @@
           }
 
           count++;
-          if (persist) localStorage.setItem(KEY, String(count));
+          if (persist) {
+            try { storage.setItem(KEY, String(count)); } catch (_) {}
+          }
 
           render();
           renderCalendar();
