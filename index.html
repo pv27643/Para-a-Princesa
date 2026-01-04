@@ -110,6 +110,20 @@
         <div class="date-description">Dia do pedido de namoro</div>
       </div>
     </div>
+
+    <div class="duck-calendar" aria-label="Calendário dos pintainhos">
+      <h3>Calendário dos pintainhos</h3>
+      <div class="duck-cal-header" role="group" aria-label="Navegação do calendário">
+        <button type="button" class="duck-cal-btn" id="duck-cal-prev" aria-label="Mês anterior">‹</button>
+        <div id="duck-cal-title" class="duck-cal-title" aria-live="polite"></div>
+        <button type="button" class="duck-cal-btn" id="duck-cal-next" aria-label="Mês seguinte">›</button>
+      </div>
+      <div class="duck-cal-weekdays" aria-hidden="true">
+        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span>
+      </div>
+      <div id="duck-cal-grid" class="duck-cal-grid" role="grid" aria-label="Dias com pintainhos"></div>
+      <div class="duck-cal-legend"><span class="duck-cal-dot" aria-hidden="true"></span> Quantos pintainhos por dia</div>
+    </div>
   </section>
   <section class="digital-gift">
     <!-- Botão visível/clicável -->
@@ -509,6 +523,87 @@
         const countEl = document.getElementById('duck-count');
         const persist = (widget.getAttribute('data-persist') || 'true') === 'true';
         const KEY = 'duckCounter:v1';
+        const DAYS_KEY = 'duckCounterDays:v1';
+
+        const calGrid = document.getElementById('duck-cal-grid');
+        const calTitle = document.getElementById('duck-cal-title');
+        const btnPrev = document.getElementById('duck-cal-prev');
+        const btnNext = document.getElementById('duck-cal-next');
+
+        function pad2(n) { return String(n).padStart(2, '0'); }
+        function toISODateLocal(d) {
+          return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+        }
+
+        function loadDaysMap() {
+          if (!persist) return {};
+          try {
+            const raw = localStorage.getItem(DAYS_KEY);
+            const obj = raw ? JSON.parse(raw) : {};
+            return (obj && typeof obj === 'object') ? obj : {};
+          } catch (_) {
+            return {};
+          }
+        }
+
+        function saveDaysMap(map) {
+          if (!persist) return;
+          try { localStorage.setItem(DAYS_KEY, JSON.stringify(map)); } catch (_) {}
+        }
+
+        let daysMap = loadDaysMap();
+        let suppressNextClick = false;
+        let viewYear;
+        let viewMonth;
+        {
+          const now = new Date();
+          viewYear = now.getFullYear();
+          viewMonth = now.getMonth();
+        }
+
+        function renderCalendar() {
+          if (!calGrid || !calTitle) return;
+
+          const monthStart = new Date(viewYear, viewMonth, 1);
+          const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+          // 0=Mon ... 6=Sun
+          const startOffset = (monthStart.getDay() + 6) % 7;
+          const monthName = monthStart.toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' });
+          calTitle.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+          calGrid.innerHTML = '';
+
+          for (let i = 0; i < startOffset; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'duck-cal-cell is-empty';
+            empty.setAttribute('aria-hidden', 'true');
+            calGrid.appendChild(empty);
+          }
+
+          for (let day = 1; day <= daysInMonth; day++) {
+            const cellDate = new Date(viewYear, viewMonth, day);
+            const key = toISODateLocal(cellDate);
+            const hits = daysMap[key] ? (parseInt(daysMap[key], 10) || 0) : 0;
+            const capped = Math.min(9, Math.max(0, hits));
+
+            const cell = document.createElement('div');
+            cell.className = 'duck-cal-cell' + (capped > 0 ? ' has-ducks' : '') + (capped === 1 ? ' has-ducks-one' : '');
+            cell.textContent = String(day);
+            cell.setAttribute('role', 'gridcell');
+            cell.setAttribute('aria-label', capped > 0
+              ? `Dia ${day}: ${capped} pintainho${capped === 1 ? '' : 's'}`
+              : `Dia ${day}`);
+
+            if (capped > 1) {
+              const badge = document.createElement('span');
+              badge.className = 'duck-cal-badge';
+              badge.textContent = String(capped);
+              badge.setAttribute('aria-hidden', 'true');
+              cell.appendChild(badge);
+            }
+            calGrid.appendChild(cell);
+          }
+        }
 
         let count = 0;
         if (persist) {
@@ -517,10 +612,42 @@
         }
 
         function render() { countEl.textContent = String(count); }
+
+        function resetDucks() {
+          count = 0;
+          if (persist) {
+            try { localStorage.setItem(KEY, '0'); } catch (_) {}
+          }
+          daysMap = {};
+          if (persist) {
+            try { localStorage.removeItem(DAYS_KEY); } catch (_) {}
+          }
+          render();
+          renderCalendar();
+          try {
+            widget.animate(
+              [{ transform: 'scale(1)' }, { transform: 'scale(0.96)' }, { transform: 'scale(1)' }],
+              { duration: 160, easing: 'ease-out' }
+            );
+          } catch(_) {}
+        }
         function bump() {
+          // marcar o dia em que meteste um pintainho (máximo 9 por dia)
+          if (persist) {
+            const todayKey = toISODateLocal(new Date());
+            const prev = daysMap[todayKey] ? (parseInt(daysMap[todayKey], 10) || 0) : 0;
+            if (prev >= 9) {
+              return;
+            }
+            daysMap[todayKey] = prev + 1;
+            saveDaysMap(daysMap);
+          }
+
           count++;
           if (persist) localStorage.setItem(KEY, String(count));
+
           render();
+          renderCalendar();
           try {
             widget.animate(
               [{ transform: 'scale(1)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }],
@@ -530,17 +657,58 @@
         }
 
         render();
-        widget.addEventListener('click', e => { e.preventDefault(); bump(); });
+        renderCalendar();
+
+        if (btnPrev) {
+          btnPrev.addEventListener('click', () => {
+            viewMonth -= 1;
+            if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
+            renderCalendar();
+          });
+        }
+        if (btnNext) {
+          btnNext.addEventListener('click', () => {
+            viewMonth += 1;
+            if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
+            renderCalendar();
+          });
+        }
+
+        widget.addEventListener('click', e => {
+          e.preventDefault();
+          if (suppressNextClick) { suppressNextClick = false; return; }
+          // Reset rápido (PC) com Shift+Click
+          if (e.shiftKey) { resetDucks(); return; }
+          bump();
+        });
         widget.addEventListener('keydown', e => {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bump(); }
         });
 
+        // Reset no telemóvel: pressionar e segurar
+        let pressTimer = null;
+        widget.addEventListener('pointerdown', e => {
+          // só botão principal / toque
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+          pressTimer = window.setTimeout(() => {
+            suppressNextClick = true;
+            resetDucks();
+          }, 600);
+        });
+        function clearPressTimer() {
+          if (pressTimer) {
+            window.clearTimeout(pressTimer);
+            pressTimer = null;
+          }
+        }
+        widget.addEventListener('pointerup', clearPressTimer);
+        widget.addEventListener('pointercancel', clearPressTimer);
+        widget.addEventListener('pointerleave', clearPressTimer);
+
         // Reset rápido com botão direito (opcional)
         widget.addEventListener('contextmenu', e => {
           e.preventDefault();
-          count = 0;
-          if (persist) localStorage.setItem(KEY, '0');
-          render();
+          resetDucks();
         });
       });
     })();
