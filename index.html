@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Amo-te Marta (Original)</title>
+  <title>Amo-Te Maria (Original)</title>
   <meta name="description" content="Versão original do contador de dias e memórias." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css" />
-  <meta property="og:title" content="Amo-te Marta" />
+  <meta property="og:title" content="Amo-Te Maria" />
   <meta property="og:description" content="Dias juntos e memórias especiais." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/IMG_2714.jpg" />
@@ -606,11 +606,17 @@
 
             const cell = document.createElement('div');
             cell.className = 'duck-cal-cell' + (capped > 0 ? ' has-ducks' : '') + (capped === 1 ? ' has-ducks-one' : '');
-            cell.textContent = String(day);
+            cell.dataset.date = key;
             cell.setAttribute('role', 'gridcell');
+            cell.setAttribute('tabindex', '0');
             cell.setAttribute('aria-label', capped > 0
               ? `Dia ${day}: ${capped} pintainho${capped === 1 ? '' : 's'}`
               : `Dia ${day}`);
+
+            const dayNum = document.createElement('span');
+            dayNum.className = 'duck-cal-day';
+            dayNum.textContent = String(day);
+            cell.appendChild(dayNum);
 
             if (capped > 1) {
               const badge = document.createElement('span');
@@ -632,6 +638,22 @@
 
         function render() { countEl.textContent = String(count); }
 
+        function addChickToDateKey(dateKey) {
+          const prev = daysMap[dateKey] ? (parseInt(daysMap[dateKey], 10) || 0) : 0;
+          if (prev >= 9) return;
+
+          daysMap[dateKey] = prev + 1;
+          saveDaysMap(daysMap);
+
+          count++;
+          if (persist) {
+            try { storage.setItem(KEY, String(count)); } catch (_) {}
+          }
+
+          render();
+          renderCalendar();
+        }
+
         function resetDucks() {
           count = 0;
           if (persist) {
@@ -651,24 +673,11 @@
           } catch(_) {}
         }
         function bump() {
-          // marcar o dia em que meteste um pintainho (máximo 9 por dia)
-          if (persist) {
-            const todayKey = toISODateLocal(new Date());
-            const prev = daysMap[todayKey] ? (parseInt(daysMap[todayKey], 10) || 0) : 0;
-            if (prev >= 9) {
-              return;
-            }
-            daysMap[todayKey] = prev + 1;
-            saveDaysMap(daysMap);
-          }
-
-          count++;
-          if (persist) {
-            try { storage.setItem(KEY, String(count)); } catch (_) {}
-          }
-
-          render();
-          renderCalendar();
+          // marcar o dia de hoje (máximo 9 por dia)
+          const todayKey = toISODateLocal(new Date());
+          const prev = daysMap[todayKey] ? (parseInt(daysMap[todayKey], 10) || 0) : 0;
+          if (prev >= 9) return;
+          addChickToDateKey(todayKey);
           try {
             widget.animate(
               [{ transform: 'scale(1)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }],
@@ -679,6 +688,26 @@
 
         render();
         renderCalendar();
+
+        if (calGrid) {
+          calGrid.addEventListener('click', (e) => {
+            const cell = e.target && e.target.closest ? e.target.closest('.duck-cal-cell') : null;
+            if (!cell || cell.classList.contains('is-empty')) return;
+            const dateKey = cell.dataset.date;
+            if (!dateKey) return;
+            addChickToDateKey(dateKey);
+          });
+
+          calGrid.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            const cell = e.target && e.target.closest ? e.target.closest('.duck-cal-cell') : null;
+            if (!cell || cell.classList.contains('is-empty')) return;
+            const dateKey = cell.dataset.date;
+            if (!dateKey) return;
+            e.preventDefault();
+            addChickToDateKey(dateKey);
+          });
+        }
 
         if (btnPrev) {
           btnPrev.addEventListener('click', () => {

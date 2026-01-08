@@ -1508,6 +1508,20 @@ video.playing {
     font-weight: 700;
     color: #c2185b;
     position: relative;
+    cursor: pointer;
+}
+
+.duck-cal-cell:focus-visible {
+    outline: 3px solid rgba(255, 107, 143, 0.35);
+    outline-offset: 2px;
+}
+
+.duck-cal-cell.is-empty {
+    cursor: default;
+}
+
+.duck-cal-day {
+    display: inline-block;
 }
 
 .duck-cal-cell.is-empty {
