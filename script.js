@@ -326,6 +326,7 @@ document.documentElement.classList.add('js-loaded');
         restartBtn: document.getElementById("restart-quiz-btn"),
         domProfile: document.getElementById("result-dominant"),
         secProfile: document.getElementById("result-secondary"),
+        resSequence: document.getElementById("result-sequence"),
         calendar: document.getElementById("result-calendar")
     };
 
@@ -443,6 +444,7 @@ document.documentElement.classList.add('js-loaded');
         
         els.domProfile.textContent = `${profiles[dominant].name}`;
         els.secProfile.textContent = `${profiles[secondary].name}`;
+        if(els.resSequence) els.resSequence.textContent = answers.join(" - ");
         
         const calData = profiles[dominant].calendar;
         els.calendar.innerHTML = calData.map(item => `
