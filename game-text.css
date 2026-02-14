@@ -1,0 +1,79 @@
+
+/* Game Header Text */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 90vw;
+    margin-bottom: 30px; /* Mais espaço */
+    padding: 0 10px;
+    align-items: center;
+    position: absolute; /* Fixar no topo */
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-sizing: border-box;
+}
+
+.game-title-main, .game-title-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; /* Maior */
+    color: #880e4f; /* Cor mais escura para contraste */
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-title-main {
+    text-align: left;
+    font-weight: 700; /* Negrito */
+}
+
+/* Estilo para destacar "os pares" */
+.game-title-main span {
+    display: block;
+    font-family: 'Great Vibes', cursive; /* Fonte manuscrita */
+    font-size: 2.5rem;
+    color: #e91e63;
+    text-transform: none;
+    margin-top: -5px;
+}
+
+.game-title-sub {
+    text-align: right;
+    font-weight: 400;
+}
+
+/* Estilo para destacar "a surpresa" */
+.game-title-sub span {
+    display: block;
+    font-weight: 700;
+    color: #c2185b;
+}
+
+/* Responsividade com media queries específicas */
+@media (max-width: 600px) {
+    .game-header {
+        position: relative; /* No mobile, deixa fluir */
+        top: auto;
+        left: auto;
+        transform: none;
+        flex-direction: column; /* Em coluna no telemóvel para não apertar */
+        gap: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .game-title-main, .game-title-sub {
+        font-size: 1.4rem;
+        text-align: center; /* Centrado no mobile */
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .game-title-main span {
+        font-size: 2rem;
+        display: inline-block; /* Na mesma linha ou bloco suave */
+        margin-left: 5px;
+    }
+}

@@ -1,0 +1,32 @@
+
+.skip-game-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: transparent;
+    color: #c2185b;
+    border: 2px solid #c2185b;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.skip-game-btn:hover {
+    background: #c2185b;
+    color: white;
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .skip-game-btn {
+        bottom: 15px; 
+        right: 15px; 
+        font-size: 0.9rem;
+        padding: 5px 12px;
+    }
+}
