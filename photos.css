@@ -29,6 +29,22 @@
     margin-bottom: 16px;
 }
 
+/* Necessário para o gesto de premir 3s funcionar bem no telemóvel:
+   sem isto, o browser interpreta o dedo parado como um possível scroll
+   e cancela o "press" ao mínimo tremor do dedo. */
+.carousel {
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.carousel-image {
+    -webkit-user-drag: none;
+    user-drag: none;
+    pointer-events: none;
+}
+
 /* Feedback visual enquanto se prime a foto */
 .carousel.pressing {
     outline: 3px solid rgba(194, 24, 91, 0.35);

@@ -266,15 +266,23 @@
         grid.appendChild(addTile);
     }
 
+    // Ao soltar o dedo depois de 3s, o telemóvel gera um "click" fantasma
+    // no mesmo sítio do ecrã — como a galeria acabou de abrir exatamente
+    // aí, esse clique cairia no overlay e fechava-a logo a seguir. Este
+    // temporizador ignora esse clique fantasma logo após abrir.
+    let galleryOpenedAt = 0;
+
     function openGallery(PhotoStorage) {
         const modal = document.getElementById('photo-gallery-modal');
         if (!modal) return;
         renderGallery(PhotoStorage);
         modal.classList.remove('hidden');
         modal.setAttribute('aria-hidden', 'false');
+        galleryOpenedAt = Date.now();
     }
 
     function closeGallery() {
+        if (Date.now() - galleryOpenedAt < 500) return;
         const modal = document.getElementById('photo-gallery-modal');
         if (!modal) return;
         modal.classList.add('hidden');
@@ -299,17 +307,26 @@
         // Premir 3 segundos na foto -> abre a galeria
         const LONG_PRESS_MS = 3000;
         let pressTimer = null;
-        function startPress() {
+        let activePointerId = null;
+        function startPress(e) {
+            if (activePointerId !== null) return; // já há uma pressão em curso
+            activePointerId = e.pointerId;
             clearTimeout(pressTimer);
             carousel.classList.add('pressing');
             pressTimer = setTimeout(() => {
                 carousel.classList.remove('pressing');
+                activePointerId = null;
                 openGallery(PhotoStorage);
             }, LONG_PRESS_MS);
         }
-        function cancelPress() {
+        function cancelPress(e) {
+            // Ignora eventos de outros ponteiros (ex: um "mouse" residual do
+            // browser durante um toque) — só o ponteiro que iniciou o
+            // premir é que pode cancelá-lo.
+            if (e.pointerId !== activePointerId) return;
             clearTimeout(pressTimer);
             carousel.classList.remove('pressing');
+            activePointerId = null;
         }
         carousel.addEventListener('pointerdown', startPress);
         carousel.addEventListener('pointerup', cancelPress);

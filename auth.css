@@ -118,29 +118,3 @@
     font-size: 0.85rem;
     line-height: 1.5;
 }
-
-/* Distintivo do utilizador ligado */
-.auth-badge {
-    position: fixed;
-    left: 16px;
-    bottom: 16px;
-    z-index: 9999;
-    background: #fff;
-    color: #c2185b;
-    border: 1px solid #ffd7e2;
-    border-radius: 999px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    box-shadow: 0 8px 22px rgba(200,58,111,.18);
-    display: inline-flex;
-    align-items: center;
-}
-
-.auth-badge[hidden] {
-    display: none;
-}
-
-@media (max-width: 480px) {
-    .auth-badge { left: 12px; bottom: 12px; font-size: 12px; padding: 7px 12px; }
-}

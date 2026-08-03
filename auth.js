@@ -28,16 +28,9 @@
         window.dispatchEvent(new CustomEvent('love:auth-ready', { detail: { user } }));
     }
 
-    function revealSite(user) {
+    function revealSite() {
         const gate = document.getElementById('auth-gate');
         if (gate) gate.classList.add('hidden');
-
-        const badge = document.getElementById('auth-badge');
-        const badgeName = document.getElementById('auth-badge-name');
-        if (user && badge && badgeName) {
-            badgeName.textContent = user === 'maria' ? 'Maria' : 'Ivan';
-            badge.hidden = false;
-        }
     }
 
     function showError(msg) {
@@ -47,12 +40,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         const gate = document.getElementById('auth-gate');
-        const badge = document.getElementById('auth-badge');
 
         // Ainda sem Supabase configurado: não bloquear o site, mostrar tal como está
         if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) {
             if (gate) gate.classList.add('hidden');
-            if (badge) badge.hidden = true;
             notifyReady(null);
             return;
         }
@@ -60,7 +51,7 @@
         // Já havia sessão guardada neste aparelho
         const existing = window.getCurrentUser();
         if (existing) {
-            revealSite(existing);
+            revealSite();
             notifyReady(existing);
             return;
         }
@@ -109,7 +100,7 @@
                 if (data === true) {
                     setCurrentUser(selectedUser);
                     showError('');
-                    revealSite(selectedUser);
+                    revealSite();
                     notifyReady(selectedUser);
                 } else {
                     showError('PIN errado, tenta outra vez.');
