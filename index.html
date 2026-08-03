@@ -106,7 +106,9 @@
       <div class="carousel" role="region" aria-label="Carrossel de fotos" aria-live="polite" id="dynamic-carousel">
         <!-- imagens serão inseridas por script -->
       </div>
-      <span id="photo-pinned-badge" class="photo-pinned-badge" hidden>📌 Fixada</span>
+      <!-- Camada transparente por cima do carrossel só para apanhar o gesto de premir;
+           fica fora do #dynamic-carousel porque este é limpo (innerHTML) a cada refresh -->
+      <div id="carousel-press-target" class="carousel-press-target" aria-hidden="true"></div>
       <p class="photo-hint">Mantém premido 3s numa foto para abrir a galeria</p>
       <p class="photo-hint" id="photo-sync-hint"></p>
     </div>

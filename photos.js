@@ -154,14 +154,6 @@
             img.decoding = 'async';
             carousel.appendChild(img);
         });
-        updatePinnedIndicator();
-    }
-
-    function updatePinnedIndicator() {
-        const badge = document.getElementById('photo-pinned-badge');
-        if (!badge) return;
-        const photo = currentPhoto();
-        badge.hidden = !(photo && photo.pinned);
     }
 
     function showIndex(idx) {
@@ -170,18 +162,19 @@
         document.querySelectorAll('.carousel-image').forEach((img, i) => {
             img.classList.toggle('active', i === currentIndex);
         });
-        updatePinnedIndicator();
     }
 
+    // Se houver uma foto fixada, o carrossel fica parado nela (não roda).
     function startRotation() {
         clearInterval(rotateInterval);
+        const pinnedIndex = photos.findIndex((p) => p.pinned);
         const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (prefersReduced || photos.length < 2) return;
+        if (pinnedIndex !== -1 || prefersReduced || photos.length < 2) return;
         rotateInterval = setInterval(() => showIndex(currentIndex + 1), 3000);
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 clearInterval(rotateInterval);
-            } else if (!rotateInterval) {
+            } else if (!rotateInterval && photos.findIndex((p) => p.pinned) === -1) {
                 rotateInterval = setInterval(() => showIndex(currentIndex + 1), 3000);
             }
         });
@@ -189,7 +182,8 @@
 
     async function refresh(PhotoStorage) {
         photos = await PhotoStorage.loadAll();
-        if (currentIndex >= photos.length) currentIndex = 0;
+        const pinnedIndex = photos.findIndex((p) => p.pinned);
+        currentIndex = pinnedIndex !== -1 ? pinnedIndex : (currentIndex < photos.length ? currentIndex : 0);
         renderCarousel();
         startRotation();
     }
@@ -304,7 +298,10 @@
             if (e.key === 'ArrowLeft') showIndex(currentIndex - 1);
         });
 
-        // Premir 3 segundos na foto -> abre a galeria
+        // Premir 3 segundos na foto -> abre a galeria.
+        // Usa uma camada própria (não o <img>) para o telemóvel não mostrar
+        // o menu nativo de "guardar imagem" a meio do gesto.
+        const pressTarget = document.getElementById('carousel-press-target');
         const LONG_PRESS_MS = 3000;
         let pressTimer = null;
         let activePointerId = null;
@@ -312,9 +309,9 @@
             if (activePointerId !== null) return; // já há uma pressão em curso
             activePointerId = e.pointerId;
             clearTimeout(pressTimer);
-            carousel.classList.add('pressing');
+            pressTarget.classList.add('pressing');
             pressTimer = setTimeout(() => {
-                carousel.classList.remove('pressing');
+                pressTarget.classList.remove('pressing');
                 activePointerId = null;
                 openGallery(PhotoStorage);
             }, LONG_PRESS_MS);
@@ -325,14 +322,16 @@
             // premir é que pode cancelá-lo.
             if (e.pointerId !== activePointerId) return;
             clearTimeout(pressTimer);
-            carousel.classList.remove('pressing');
+            pressTarget.classList.remove('pressing');
             activePointerId = null;
         }
-        carousel.addEventListener('pointerdown', startPress);
-        carousel.addEventListener('pointerup', cancelPress);
-        carousel.addEventListener('pointercancel', cancelPress);
-        carousel.addEventListener('pointerleave', cancelPress);
-        carousel.addEventListener('contextmenu', (e) => e.preventDefault());
+        if (pressTarget) {
+            pressTarget.addEventListener('pointerdown', startPress);
+            pressTarget.addEventListener('pointerup', cancelPress);
+            pressTarget.addEventListener('pointercancel', cancelPress);
+            pressTarget.addEventListener('pointerleave', cancelPress);
+            pressTarget.addEventListener('contextmenu', (e) => e.preventDefault());
+        }
 
         const closeBtn = document.getElementById('close-photo-gallery-btn');
         const overlay = document.querySelector('.photo-gallery-overlay');

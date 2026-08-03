@@ -1,22 +1,6 @@
 /* ============================ */
-/* Carrossel: badge + dica de "premir 3s" */
+/* Carrossel: dica de "premir 3s" */
 /* ============================ */
-.photo-pinned-badge[hidden] {
-    display: none;
-}
-
-.photo-pinned-badge {
-    display: inline-block;
-    margin-top: 8px;
-    background: #fff0f5;
-    border: 1px solid #ffc1cc;
-    color: #c2185b;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 20px;
-}
-
 .photo-hint {
     text-align: center;
     font-size: 0.75rem;
@@ -27,16 +11,7 @@
 
 .center-image-container {
     margin-bottom: 16px;
-}
-
-/* Necessário para o gesto de premir 3s funcionar bem no telemóvel:
-   sem isto, o browser interpreta o dedo parado como um possível scroll
-   e cancela o "press" ao mínimo tremor do dedo. */
-.carousel {
-    touch-action: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
+    position: relative;
 }
 
 .carousel-image {
@@ -45,14 +20,27 @@
     pointer-events: none;
 }
 
-/* Feedback visual enquanto se prime a foto */
-.carousel.pressing {
-    outline: 3px solid rgba(194, 24, 91, 0.35);
-    outline-offset: 3px;
-    transition: outline-color 3s linear;
+/* Camada transparente por cima do carrossel, só para o gesto de premir 3s.
+   Usar um <div> em vez do <img> evita o menu nativo de "guardar imagem" do
+   telemóvel, que interromperia o gesto antes dos 3 segundos. */
+.carousel-press-target {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
 }
-.carousel.pressing::after {
-    content: '';
+
+/* Feedback visual enquanto se prime a foto */
+.carousel-press-target.pressing {
+    outline: 3px solid rgba(194, 24, 91, 0.35);
+    outline-offset: -3px;
 }
 
 /* ============================ */
