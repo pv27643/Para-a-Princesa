@@ -98,9 +98,5 @@ function revealSite() {
     proposalOverlay.style.opacity = '0';
     setTimeout(() => {
         proposalOverlay.style.display = 'none';
-        
-        // Ensure Play Again is visible on main site
-        const playAgainBtn = document.getElementById('play-again-btn');
-        if (playAgainBtn) playAgainBtn.style.display = 'inline-block';
     }, 1000);
 }

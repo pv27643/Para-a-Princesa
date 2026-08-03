@@ -1865,276 +1865,37 @@ video.playing {
     }
 }
 
-/* ============================ */
-/* Estilos Scoped para a secção Plano da Noite */
-/* ============================ */
-.val-plan {
-    padding: 20px 0;
-    max-width: 100%;
-    margin-top: 30px;
-    background: rgba(255, 255, 255, 0.5); /* Fundo um pouco mais visível */
-    border-radius: 15px;
-    border: 2px solid #ffc1cc;
-}
-
-.val-plan .val-title {
-    text-align: center;
-    margin-bottom: 25px;
-    font-family: 'Great Vibes', cursive;
-    font-size: 2.8rem;
-    color: #c2185b;
-    text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-}
-
-.val-plan .val-accordion {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
-
-.val-plan .val-item {
-    background: white;
-    border-radius: 12px; /* Mais arredondado */
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(194, 24, 91, 0.1); /* Sombra suave rosa */
-    transition: transform 0.2s;
-}
-
-.val-plan .val-item:hover {
-    transform: translateY(-2px);
-}
-
-.val-plan .val-btn, .val-plan .val-btn-final {
-    background: white;
-    border: none;
-    width: 100%;
-    padding: 18px 25px;
-    text-align: left;
-    font-size: 1.15em;
-    font-weight: 500; /* Menos bold, mais elegante */
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
+/* Contador do pintainho - flutuante no canto direito */
+.duck-counter {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    display: inline-flex;
     align-items: center;
-    font-family: 'Poppins', sans-serif;
-    color: #444;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-/* Botão especial "Última Peça" */
-.val-plan .val-btn-final {
-    color: #c2185b;
-    font-weight: 600;
-}
-
-.val-plan .val-btn:hover, .val-plan .val-btn-final:hover {
-    background-color: #fff0f5; /* Lavender blush muito suave */
-    color: #c2185b;
-}
-
-.val-plan .val-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Curva de animação mais sofisticada */
-}
-
-.val-plan .val-inner {
-    padding: 20px 25px 30px 25px;
-    line-height: 1.7;
-    color: #555;
-    background-color: #fffafc; /* Fundo muito levemente rosado para o conteúdo */
-    border-top: 1px solid #ffeef2;
-}
-
-.val-plan .val-btn.val-active, .val-plan .val-btn-final.val-active {
-    background-color: #fff0f5;
-    color: #c2185b;
-    font-weight: 600;
-}
-
-/* Seta indicadora mais elegante */
-.val-plan .val-btn::after, .val-plan .val-btn-final::after {
-    content: '›';
-    font-size: 1.8em;
-    line-height: 0.8;
-    color: #ff8fa3;
-    transition: transform 0.3s;
-    font-weight: 300;
-}
-
-.val-plan .val-btn.val-active::after, .val-plan .val-btn-final.val-active::after {
-    transform: rotate(90deg);
-    color: #c2185b;
-}
-
-/* --- Elementos Interativos --- */
-
-/* Botões de Ação (Gerar Missão, Iniciar Timer, etc) */
-.val-action-btn {
-    background-color: #ff8fa3;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-    box-shadow: 0 2px 5px rgba(255, 143, 163, 0.4);
-    margin-top: 10px;
-}
-
-.val-action-btn:hover {
-    background-color: #c2185b;
-    transform: scale(1.05);
-}
-
-.val-action-btn:active {
-    transform: scale(0.95);
-}
-
-/* Caixas de display (Missão, Timer) */
-.val-mission-box, .val-timer {
-    font-size: 1.2rem;
-    font-weight: 500;
-    color: #c2185b;
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    border: 2px dashed #ffc1cc;
-    margin: 15px 0;
-    text-align: center;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.val-timer {
-    font-size: 2.5rem;
-    font-family: monospace; /* Para os números do timer não saltarem */
-    border: 2px solid #ffc1cc;
-}
-
-/* Checklist */
-.val-checklist-container {
-    margin-top: 20px;
+    gap: 8px;
+    padding: 10px 12px;
     background: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(255, 193, 204, 0.3);
-    border: 1px solid #ffeef2;
-}
-
-.val-checklist label {
-    display: flex;
-    align-items: center; /* Alinha checkbox e texto verticalmente */
-    margin-bottom: 12px;
+    color: #333;
+    border: 1px solid #ffd7e2;
+    border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(200,58,111,.18);
     cursor: pointer;
-    font-size: 1rem;
-    padding: 12px 15px;
-    border-radius: 10px;
-    background-color: #fff;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    user-select: none;
+    z-index: 9999;
+    font-weight: 700;
+    font-size: 15px;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.val-checklist label:hover {
-    background-color: #fff0f5;
-    transform: translateX(5px);
-    border-color: #ffc1cc;
+.duck-counter:focus-visible {
+    outline: 3px solid rgba(255,107,143,.35);
+    outline-offset: 2px;
 }
+.duck-counter:active { transform: translateY(1px); }
+.duck-emoji { font-size: 20px; line-height: 1; }
+.duck-count { min-width: 1.5ch; text-align: right; color: #c83a6f; }
 
-.val-checklist input[type="checkbox"] {
-    margin-right: 15px;
-    accent-color: #c2185b;
-    width: 20px; /* Checkbox maior */
-    height: 20px;
-    cursor: pointer;
-    flex-shrink: 0; /* Impede que a checkbox encolha se o texto for grande */
-}
-
-.val-checklist label.completed {
-    text-decoration: line-through;
-    color: #bbb;
-    background-color: #f9f9f9;
-    box-shadow: none;
-    opacity: 0.7;
-}
-
-/* Bolinha de progresso animada ao completar */
-.val-checklist label.completed input[type="checkbox"] {
-    filter: grayscale(100%);
-}
-
-.val-progress {
-    margin-top: 15px;
-    text-align: right;
-    font-size: 0.85rem;
-    color: #888;
-    font-weight: 600;
-}
-
-/* Scoreboard (Strip) */
-.val-score-board {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.val-score-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.val-counter-box {
-    background: white;
-    border: 2px solid #ffc1cc;
-    border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.val-counter-box span {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #c2185b;
-    min-width: 30px;
-    text-align: center;
-}
-
-.val-score-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: none;
-    background: #ff8fa3;
-    color: white;
-    font-size: 1.2rem;
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-}
-
-.val-score-btn:hover {
-    background: #c2185b;
-}
-
-.val-small-text {
-    font-size: 0.8rem;
-    color: #999;
-    margin-top: 5px;
+@media (max-width: 480px) {
+    .duck-counter { right: 12px; bottom: 12px; padding: 9px 11px; font-size: 14px; }
+    .duck-emoji { font-size: 19px; }
 }
 

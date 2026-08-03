@@ -1,0 +1,118 @@
+/* ============================ */
+/* Quadro 24h (secção inline, abaixo do calendário dos pintainhos) */
+/* ============================ */
+.board-section {
+    background: #fff;
+    width: 100%;
+    max-width: 640px;
+    margin: 30px auto 0;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(194, 24, 91, 0.15);
+    border: 4px solid #ffc1cc;
+    box-sizing: border-box;
+}
+
+.board-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.4rem;
+    color: #c2185b;
+    margin: 0 0 6px;
+    text-align: center;
+}
+
+.board-subtitle {
+    text-align: center;
+    color: #777;
+    font-size: 0.9rem;
+    margin: 0 0 16px;
+}
+
+.board-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.board-colors {
+    display: flex;
+    gap: 8px;
+}
+
+.board-color {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.board-color:hover {
+    transform: scale(1.1);
+}
+
+.board-color.active {
+    border-color: #c2185b;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.25);
+}
+
+.board-action-btn {
+    background: #fff0f5;
+    color: #c2185b;
+    border: 1px solid #ffc1cc;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.board-action-btn:hover {
+    background: #ffc1cc;
+    color: #fff;
+}
+
+.board-action-btn[aria-pressed="true"] {
+    background: #c2185b;
+    color: #fff;
+    border-color: #c2185b;
+}
+
+.board-canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    background: #fffafc;
+    border: 2px dashed #ffc1cc;
+    border-radius: 12px;
+    cursor: crosshair;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.board-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #999;
+    margin: 10px 0 0;
+    min-height: 1em;
+}
+
+@media (max-width: 480px) {
+    .board-section {
+        padding: 18px 14px;
+    }
+    .board-title {
+        font-size: 2rem;
+    }
+}

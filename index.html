@@ -4,71 +4,62 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Amo-Te Maria (Original)</title>
-  <meta name="description" content="Versão original do contador de dias e memórias." />
+  <title>Amo-te, Maria ❤️</title>
+  <meta name="description" content="O nosso cantinho: dias juntos, datas especiais e memórias." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="game.css" />
   <link rel="stylesheet" href="game-text.css" />
   <link rel="stylesheet" href="proposal.css" />
-  <meta property="og:title" content="Amo-Te Maria" />
-  <meta property="og:description" content="Dias juntos e memórias especiais." />
+  <link rel="stylesheet" href="board.css" />
+  <link rel="stylesheet" href="auth.css" />
+  <link rel="stylesheet" href="booking.css" />
+  <link rel="stylesheet" href="photos.css" />
+  <meta property="og:title" content="Amo-te, Maria ❤️" />
+  <meta property="og:description" content="O nosso cantinho: dias juntos, datas especiais e memórias." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/IMG_2714.jpg" />
-  <style>
-    /* Estilo do pintainho (duck-counter) - flutuante no canto direito */
-    .duck-counter {
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      background: #fff;
-      color: #333;
-      border: 1px solid #ffd7e2;
-      border-radius: 999px;
-      box-shadow: 0 8px 22px rgba(200,58,111,.18);
-      cursor: pointer;
-      user-select: none;
-      z-index: 9999;
-      font-weight: 700;
-      font-size: 15px;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .duck-counter:focus-visible {
-      outline: 3px solid rgba(255,107,143,.35);
-      outline-offset: 2px;
-    }
-    .duck-counter:active { transform: translateY(1px); }
-    .duck-emoji { font-size: 20px; line-height: 1; }
-    .duck-count { min-width: 1.5ch; text-align: right; color: #c83a6f; }
-
-    @media (max-width: 480px) {
-      .duck-counter { right: 12px; bottom: 12px; padding: 9px 11px; font-size: 14px; }
-      .duck-emoji { font-size: 19px; }
-    }
-
-    body {
-      position: relative;
-      overflow-x: hidden;
-    }
-  </style>
 </head>
 <body>
+
+  <!-- Ecrã de login (PIN Maria/Ivan) — só aparece depois de o Supabase estar configurado -->
+  <div id="auth-gate" class="auth-gate hidden">
+      <div class="auth-card">
+          <h2 class="auth-title">Quem és tu? ❤️</h2>
+          <div class="auth-users">
+              <button type="button" class="auth-user-btn" data-user="maria">Maria</button>
+              <button type="button" class="auth-user-btn" data-user="ivan">Ivan</button>
+          </div>
+          <div id="auth-pin-row" class="auth-pin-row">
+              <input id="auth-pin-input" class="auth-pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" />
+              <button type="button" id="auth-submit-btn" class="auth-submit-btn">Entrar</button>
+          </div>
+          <p id="auth-error" class="auth-error"></p>
+      </div>
+  </div>
+
+  <!-- Distintivo do utilizador ligado -->
+  <div id="auth-badge" class="auth-badge" hidden>
+      <span>👋 <span id="auth-badge-name"></span></span>
+      <button type="button" id="auth-logout-btn">sair</button>
+  </div>
 
   <!-- Container para animação de corações -->
   <div class="hearts-explosion" id="heartsContainer"></div>
   
-  <!-- Game Overlay -->
+  <!-- Game Overlay (agora aberto a pedido a partir do botão "Jogo da Memória", já não bloqueia a entrada no site) -->
   <div id="game-overlay" class="game-overlay">
+      <button id="close-game-btn" class="close-quiz-btn" aria-label="Fechar jogo" onclick="closeMemoryGame()">×</button>
       <div class="game-content">
           <div class="game-header">
               <div class="game-title-main">Junta <span>os pares</span></div>
               <div class="game-title-sub">para revelar <span>a surpresa</span></div>
           </div>
           <div id="game-grid" class="game-grid"></div>
+          <div id="game-win-message" class="game-win-message" hidden>
+              <p>Ganhaste! ❤️</p>
+              <button id="game-win-close" class="game-win-btn" onclick="closeMemoryGame()">Fechar</button>
+          </div>
       </div>
   </div>
 
@@ -121,6 +112,14 @@
       <div class="carousel" role="region" aria-label="Carrossel de fotos" aria-live="polite" id="dynamic-carousel">
         <!-- imagens serão inseridas por script -->
       </div>
+      <span id="photo-pinned-badge" class="photo-pinned-badge" hidden>📌 Fixada</span>
+      <div class="photo-toolbar">
+          <button type="button" id="photo-add-btn" class="photo-toolbar-btn">➕ Adicionar</button>
+          <button type="button" id="photo-pin-btn" class="photo-toolbar-btn">📌 Fixar esta</button>
+          <button type="button" id="photo-remove-btn" class="photo-toolbar-btn danger">🗑️ Remover</button>
+          <input type="file" id="photo-file-input" accept="image/*" hidden />
+      </div>
+      <p class="photo-hint" id="photo-sync-hint"></p>
     </div>
     
     <!-- Botão Quiz movido para aqui -->
@@ -128,8 +127,8 @@
         <button id="open-quiz-btn" class="quiz-btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease;">
             💘 Quiz: O Nosso Dia Ideal
         </button>
-        <button id="play-again-btn" class="btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease; display: none;">
-            🎮 Jogar Novamente
+        <button id="open-game-btn" class="btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease;">
+            🧩 Jogo da Memória
         </button>
     </div>
 
@@ -190,6 +189,47 @@
       <div class="duck-cal-legend"><span class="duck-cal-dot" aria-hidden="true"></span> Quantos pintainhos por dia</div>
     </div>
     </div>
+
+    <div class="board-section">
+        <h2 class="board-title">O Nosso Quadro 🎨</h2>
+        <p class="board-subtitle">Desenhem um para o outro.</p>
+
+        <div class="board-toolbar">
+            <div class="board-colors" id="board-colors">
+                <button type="button" class="board-color active" data-color="#c2185b" style="background:#c2185b" aria-label="Rosa"></button>
+                <button type="button" class="board-color" data-color="#1a1a1a" style="background:#1a1a1a" aria-label="Preto"></button>
+                <button type="button" class="board-color" data-color="#ff8fa3" style="background:#ff8fa3" aria-label="Rosa claro"></button>
+                <button type="button" class="board-color" data-color="#4361ee" style="background:#4361ee" aria-label="Azul"></button>
+                <button type="button" class="board-color" data-color="#2a9d8f" style="background:#2a9d8f" aria-label="Verde"></button>
+            </div>
+            <button type="button" id="board-eraser-btn" class="board-action-btn" aria-pressed="false">🧼 Borracha</button>
+        </div>
+
+        <canvas id="board-canvas" class="board-canvas" width="800" height="600"></canvas>
+        <p class="board-hint" id="board-sync-hint"></p>
+    </div>
+
+    <div id="booking-section" class="booking-section">
+        <h2 class="booking-title">Reservar um Dia 📅</h2>
+        <p class="booking-subtitle">Um propõe uma data, o outro aceita ou recusa.</p>
+
+        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+        <div id="booking-user-picker" class="booking-user-picker" hidden>
+            <span>A agir como:</span>
+            <button type="button" data-user="maria">Maria</button>
+            <button type="button" data-user="ivan">Ivan</button>
+        </div>
+
+        <div class="booking-form">
+            <input type="date" id="booking-date-input" class="booking-date-input" />
+            <input type="text" id="booking-note-input" class="booking-note-input" placeholder="Nota (opcional): jantar fora?" maxlength="120" />
+            <button type="button" id="booking-propose-btn" class="booking-propose-btn">Propor</button>
+        </div>
+        <p id="booking-error" class="booking-error"></p>
+
+        <div id="booking-list" class="booking-list"></div>
+        <p class="booking-hint" id="booking-sync-hint"></p>
+    </div>
   </section>
 
 
@@ -241,149 +281,6 @@
           </div>
       </div>
   </div>
-  <!-- Section: Plano da Nossa Noite -->
-  <section class="val-plan">
-    <h2 class="val-title">Plano da Nossa Noite</h2>
-    
-    <div class="val-accordion">
-        <!-- Item 1: Checklist Interativa -->
-        <div class="val-item">
-            <button class="val-btn">Missões Amorosamente Estranhas</button>
-            <div class="val-content">
-                    <p class="val-desc">Completem estas missões para desbloquear memórias únicas.</p>
-                    <div class="val-inner">
-                    <div class="val-checklist-container">
-                        <div id="val-checklist" class="val-checklist">
-                            <!-- Items serão gerados via JS -->
-                        </div>
-                        <div class="val-progress">Missões completas: <span id="val-completed-count">0</span> / <span id="val-total-count">0</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 2: Taça do Destino -->
-        <div class="val-item">
-            <button class="val-btn">Taça do Destino</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p class="val-desc">Clique para tirar uma missão da taça.</p>
-                    <div class="val-game-container">
-                        <div id="val-mission-display" class="val-mission-box">...</div>
-                        <button id="val-generate-mission" class="val-action-btn">Gerar Missão</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 3: Arte do Caos -->
-        <div class="val-item">
-            <button class="val-btn">Arte do Caos</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p class="val-desc">Desenhem juntos! Têm 2 minutos.</p>
-                    <div class="val-timer-container">
-                        <div id="val-timer-display" class="val-timer">02:00</div>
-                        <button id="val-start-timer" class="val-action-btn">Iniciar Temporizador</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 4: Cozinha do Caos -->
-        <div class="val-item">
-            <button class="val-btn">Cozinha do Caos</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p class="val-desc"></p>
-                    <div class="val-game-container">
-                        <div id="val-rule-display" class="val-mission-box">Preparem-se...</div>
-                        <button id="val-new-rule" class="val-action-btn">Nova Regra</button>
-                        <p class="val-small-text">Dica: Gera uma nova regra a cada 5 minutos.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 5: Recriar Fotografias -->
-        <div class="val-item">
-            <button class="val-btn">Recriar Fotografias</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p>Vamos recriar fotos engraçadas e comparar o resultado final.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 6: Aprender uma Dança Juntos (antigo Desenho as cegas removido/substituido) -->
-        <!-- Nota: User pediu 10 items na lista final, vou ajustar conforme o pedido -->
-        
-        <div class="val-item">
-            <button class="val-btn">Aprender uma Dança Juntos</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p>Vamos escolher um estilo como salsa, kizomba, tango ou dança lenta e tentar aprender juntos.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 7: Filme -->
-        <div class="val-item">
-            <button class="val-btn">Filme — Pedra Papel Tesoura</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p>Melhor de 5. Quem ganhar escolhe o filme. Quem perder faz as pipocas.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 8: Cartas do Futuro -->
-        <div class="val-item">
-            <button class="val-btn">Cartas do Futuro</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p>Cada um escreve uma carta para abrir daqui a 1 ano.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 9: Passeio Noturno -->
-        <div class="val-item">
-            <button class="val-btn">Passeio Noturno</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p>Passeio noturno para conversar e aproveitar o momento.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Item 10: Última Peça -->
-        <div class="val-item">
-            <button class="val-btn-final">Última Peça</button>
-            <div class="val-content">
-                <div class="val-inner">
-                    <p class="val-desc">Vamos jogar um jogo. Cada vez que alguém perde tira uma peça de roupa. O jogo termina quando alguém ficar sem roupa ou quando alguém completar o objetivo. Quem perder faz um desafio.</p>
-                    <div class="val-score-board">
-                        <div class="val-score-item">
-                            <span>Ivan</span>
-                            <div class="val-counter-box">
-                                <span id="val-score-ivan">0</span>
-                                <button class="val-score-btn" onclick="updateValScore('ivan', 1)">+</button>
-                            </div>
-                        </div>
-                         <div class="val-score-item">
-                            <span>Maria</span>
-                             <div class="val-counter-box">
-                                <span id="val-score-maria">0</span>
-                                <button class="val-score-btn" onclick="updateValScore('maria', 1)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  </section>
 
   <section class="digital-gift">
     <!-- Botão visível/clicável -->
@@ -427,602 +324,26 @@
     </div>
   </div>
 
-  <!-- Contador do pintainho: mude data-persist para "false" se quiser que reinicie a cada refresh -->
-  <div id="duck-counter" class="duck-counter" role="button" aria-label="Contador do pintainho" tabindex="0" data-persist="true">
+  <!-- Contador do pintainho (ver ducks.js) -->
+  <div id="duck-counter" class="duck-counter" role="button" aria-label="Contador do pintainho" tabindex="0">
     <span class="duck-emoji" aria-hidden="true">🐥</span>
     <span id="duck-count" class="duck-count">0</span>
   </div>
 
-  <!-- Background music element (place your MP3 at assets/audio/musica.mp3 or change the src) -->
-  <audio id="bg-audio" loop preload="auto">
-    <source src="assets/audio/musica.mp3" type="audio/mpeg" />
-    Your browser does not support the audio element.
-  </audio>
+  <!-- Supabase (base de dados partilhada) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="supabase-config.js"></script>
+  <script defer src="supabase-client.js"></script>
+  <script defer src="auth.js"></script>
+
   <script defer src="script.js"></script>
   <script defer src="game.js"></script>
   <script defer src="proposal.js"></script>
-  <script>
-    // Animação de explosão de corações ao carregar
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(() => {
-        const heartsContainer = document.getElementById('heartsContainer');
-        
-        // Criar 30 corações
-        for (let i = 0; i < 30; i++) {
-          const heart = document.createElement('div');
-          heart.className = 'heart';
-          heart.innerHTML = '❤️';
-          
-          // Posição aleatória na largura da tela
-          heart.style.left = Math.random() * 90 + '%';
-          heart.style.bottom = '0px';
-          
-          // Delay aleatório para cada coração
-          heart.style.animationDelay = (Math.random() * 1.5) + 's';
-          
-          // Adicionar ao container
-          heartsContainer.appendChild(heart);
-        }
-        
-        // Remover container após animação
-        setTimeout(() => {
-          heartsContainer.remove();
-        }, 5000);
-      }, 500);
-    });
-
-    // Contador dinâmico: inicia em 29 de Junho do ano apropriado
-    document.addEventListener('DOMContentLoaded', function () {
-      const now = new Date();
-      // 29 de Junho do ano corrente (mes é 5 porque janeiro = 0)
-      let startDate = new Date(now.getFullYear(), 5, 29, 0, 0, 0);
-      // Se 29/06 deste ano ainda não ocorreu, usa 29/06 do ano anterior
-      if (startDate > now) {
-        startDate = new Date(now.getFullYear() - 1, 5, 29, 0, 0, 0);
-      }
-
-      function updateCounter() {
-        const now = new Date();
-        let diff = now - startDate;
-        if (diff < 0) diff = 0;
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        diff -= days * (1000 * 60 * 60 * 24);
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        diff -= hours * (1000 * 60 * 60);
-        const minutes = Math.floor(diff / (1000 * 60));
-        diff -= minutes * (1000 * 60);
-        const seconds = Math.floor(diff / 1000);
-
-        const el = id => document.getElementById(id);
-        if (el('days')) el('days').textContent = String(days).padStart(2, '0');
-        if (el('hours')) el('hours').textContent = String(hours).padStart(2, '0');
-        if (el('minutes')) el('minutes').textContent = String(minutes).padStart(2, '0');
-        if (el('seconds')) el('seconds').textContent = String(seconds).padStart(2, '0');
-      }
-
-      updateCounter();
-      setInterval(updateCounter, 1000);
-    });
-  </script>
-
-  <!-- ...existing code de validação de vídeos... -->
-
-  <script>
-    (function(){
-      let seqState = { running: false, skipped: false, currentPage: 0, pages: [] };
-      const fakeNumber = 36;
-      const targetPhrase = "Amo-te muito Marta/Maria";
-
-      function setSeqHTML(html) {
-        const el = document.getElementById('seq-text');
-        if (el) el.innerHTML = html;
-      }
-      function showOverlay() {
-        seqState.skipped = false;
-        seqState.running = true;
-        const overlay = document.getElementById('love-sequence-overlay');
-        if (overlay) {
-          overlay.classList.remove('hidden');
-          overlay.style.display = 'flex';
-          overlay.setAttribute('aria-hidden','false');
-        }
-      }
-      function hideOverlay() {
-        const overlay = document.getElementById('love-sequence-overlay');
-        if (overlay) {
-          overlay.classList.add('hidden');
-          overlay.style.display = '';
-          overlay.setAttribute('aria-hidden','true');
-        }
-        seqState.running = false;
-      }
-      window.skipSequence = function() {
-        seqState.skipped = true;
-      };
-
-      function typeText(text, speed=40) {
-        return new Promise(resolve=>{
-          const el = document.getElementById('seq-text');
-          if (!el) return resolve();
-          el.textContent = '';
-          let i = 0;
-          (function step(){
-            if (seqState.skipped) { el.textContent = text; return resolve(); }
-            if (i < text.length) {
-              el.textContent += text[i++];
-              setTimeout(step, speed);
-            } else {
-              setTimeout(resolve, 500);
-            }
-          })();
-        });
-      }
-      function eraseText(speed=24) {
-        return new Promise(resolve=>{
-          const el = document.getElementById('seq-text');
-          if (!el) return resolve();
-          let txt = el.textContent;
-          let i = txt.length;
-          (function step(){
-            if (seqState.skipped) { el.textContent = ''; return resolve(); }
-            if (i > 0) {
-              i--;
-              el.textContent = txt.slice(0,i);
-              setTimeout(step, speed);
-            } else resolve();
-          })();
-        });
-      }
-      async function showLines(lines) {
-        const container = document.getElementById('seq-extra');
-        container.innerHTML = '';
-        for (let i=0;i<lines.length;i++) {
-          if (seqState.skipped) {
-            container.innerHTML = lines.map(l=>`<div class="seq-line show">${l}</div>`).join('');
-            return;
-          }
-          const div = document.createElement('div');
-          div.className = 'seq-line';
-          div.textContent = lines[i];
-          container.appendChild(div);
-          requestAnimationFrame(()=> div.classList.add('show'));
-          await new Promise(r=>setTimeout(r, 700));
-        }
-      }
-
-      function populatePagesWithRepeats(count) {
-        const perPage = 6; // linhas por página
-        const pages = [];
-        for (let i=0;i<count;i+=perPage) {
-          const chunk = [];
-          for (let j=0;j<perPage && (i+j)<count; j++) {
-            chunk.push(`<div style="padding:8px 0;font-size:18px;color:#c83a6f;font-weight:600;text-align:center;">${targetPhrase}</div>`);
-          }
-          pages.push(`<div class="page-block">${chunk.join('')}</div>`);
-        }
-        seqState.pages = pages;
-        seqState.currentPage = 0;
-        showPage(0);
-      }
-
-      function showPage(idx) {
-        const pc = document.getElementById('page-content');
-        const counter = document.getElementById('page-counter');
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        if (!pc) return;
-        pc.innerHTML = seqState.pages[idx] || '<div style="text-align:center;color:#777;">Sem conteúdo</div>';
-        seqState.currentPage = idx;
-        if (counter) counter.textContent = `${idx+1}/${Math.max(1, seqState.pages.length)}`;
-        if (prevBtn) prevBtn.disabled = idx <= 0;
-        if (nextBtn) nextBtn.disabled = idx >= seqState.pages.length - 1;
-        setTimeout(()=> {
-          const container = document.getElementById('love-pages-container');
-          if (container) container.scrollIntoView({behavior:'smooth', block:'center'});
-        }, 120);
-      }
-
-      // Navegação/fecho
-      window.previousPage = window.previousPage || function() {
-        if (seqState.currentPage > 0) { seqState.currentPage--; showPage(seqState.currentPage); }
-      };
-      window.nextPage = window.nextPage || function() {
-        if (seqState.currentPage < seqState.pages.length - 1) { seqState.currentPage++; showPage(seqState.currentPage); }
-      };
-      window.closeLovePages = window.closeLovePages || function() {
-        const c = document.getElementById('love-pages-container');
-        if (c) { c.classList.add('love-pages-hidden'); c.setAttribute('aria-hidden','true'); }
-      };
-
-      // Sequência pedida: pergunta -> número fictício -> comparações -> mensagem fofa -> abrir páginas
-      window.runSequence = async function() {
-        if (seqState.running) return;
-        showOverlay();
-        await new Promise(r => setTimeout(r, 150)); // garantir render do overlay
-        // 1) Pergunta
-        await typeText('Sabes quantas vezes disseste "Amo-te Muito Ivan"?', 40);
-        if (seqState.skipped) { hideOverlay(); return; }
-        await new Promise(r=>setTimeout(r, 450));
-        await eraseText(24);
-        if (seqState.skipped) { hideOverlay(); return; }
-        // 2) Número fictício
-        setSeqHTML(`<span class="seq-number" aria-live="polite">${fakeNumber}</span><div style="font-size:12px;color:#666;margin-top:6px;">vezes</div>`);
-        const numEl = document.querySelector('.seq-number');
-        if (numEl) numEl.animate([{ transform: 'scale(0.6)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }], { duration: 700, easing:'cubic-bezier(.2,.8,.2,1)' });
-        await new Promise(r=>setTimeout(r, 900));
-        if (seqState.skipped) { hideOverlay(); return; }
-        // 3) Comparações (3 linhas)
-        await showLines([
-          "Mais doce que chocolate quente num dia frio.",
-          "Mais brilhante que a primeira estrela da noite.",
-          "Mais calma que um abraço ao fim do dia."
-        ]);
-        await new Promise(r=>setTimeout(r, 800));
-        if (seqState.skipped) { hideOverlay(); return; }
-        // 4) Mensagem fofa
-        setSeqHTML(`<div style="font-weight:700;color:#c83a6f;">És o meu sorriso diário 💕</div>`);
-        await new Promise(r=>setTimeout(r, 1000));
-        // 5) Preparar e abrir páginas
-        populatePagesWithRepeats(fakeNumber);
-        hideOverlay();
-        const container = document.getElementById('love-pages-container');
-        if (container) {
-          container.classList.remove('love-pages-hidden');
-          container.setAttribute('aria-hidden','false');
-          if (window.innerWidth <= 480) {
-            setTimeout(()=> container.scrollIntoView({behavior:'smooth', block:'start'}), 80);
-          }
-        }
-      };
-
-      // Alias novo e explícito para iniciar sequência (evita conflitos)
-      window.openSequenceEntry = function() { runSequence(); };
-
-      // Garantir botão visível e acessível
-      document.addEventListener('DOMContentLoaded', function() {
-        const btn = document.getElementById('digital-gift-btn');
-        if (!btn) return;
-        btn.style.display = 'block';
-        btn.style.visibility = 'visible';
-        btn.style.opacity = '1';
-        btn.style.pointerEvents = 'auto';
-        if (!btn.hasAttribute('role')) btn.setAttribute('role','button');
-        if (!btn.hasAttribute('tabindex')) btn.setAttribute('tabindex','0');
-        // Listener em captura: impede qualquer outro handler de abrir o caderno diretamente
-        btn.addEventListener('click', function(e){
-          e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-          window.openSequenceEntry();
-        }, { capture: true });
-        btn.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.openSequenceEntry(); }
-        });
-      });
-    })();
-  </script>
-
-  <!-- Guard: se o botão for removido/ocultado por outro script/CSS, recria e mantém visível -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      function attachBtnHandlers(btn){
-        // limpar onclick legado, se existir
-        try { btn.onclick = null; } catch(_) {}
-        btn.addEventListener('click', function(e){
-          e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-          if (typeof window.openSequenceEntry === 'function') window.openSequenceEntry();
-        }, { capture: true });
-        btn.addEventListener('keydown', function(e){
-          if (e.key==='Enter' || e.key===' ') {
-            e.preventDefault();
-            if (typeof window.openSequenceEntry === 'function') window.openSequenceEntry();
-          }
-        });
-      }
-      function ensureBtn() {
-        let btn = document.getElementById('digital-gift-btn');
-        if (!btn) {
-          const sec = document.querySelector('section.digital-gift') || document.body;
-          btn = document.createElement('div');
-          btn.id = 'digital-gift-btn';
-          btn.className = 'digital-gift-title clickable-title';
-          btn.setAttribute('role','button');
-          btn.setAttribute('tabindex','0');
-          btn.textContent = 'Amo-te Muito Marta/Maria❤️';
-          sec.appendChild(btn);
-        }
-        // forçar visibilidade
-        btn.style.display = 'block';
-        btn.style.visibility = 'visible';
-        btn.style.opacity = '1';
-        btn.style.pointerEvents = 'auto';
-        attachBtnHandlers(btn);
-      }
-      ensureBtn();
-      // observar remoções/alterações no DOM e repor o botão caso desapareça
-      new MutationObserver(ensureBtn).observe(document.body, { childList: true, subtree: true });
-    });
-  </script>
-
-  <!-- script para popular o carrossel -->
-  <script>
-    (function(){
-      // Lista de imagens estáticas
-      const images = [
-        'assets/images/IMG_2714.jpg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.42.jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.43 (2).jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.43 (3).jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.43.jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.46 (1).jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.46 (2).jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.46 (3).jpeg',
-        'assets/images/WhatsApp Image 2025-10-26 at 23.23.46.jpeg'
-      ];
-
-      const carousel = document.getElementById('dynamic-carousel');
-      if (!carousel) return;
-
-      images.forEach((src, idx) => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = `Momentos felizes ${idx+1}`;
-        img.className = 'center-image carousel-image' + (idx === 0 ? ' active' : '');
-        img.loading = idx === 0 ? 'eager' : 'lazy';
-        img.decoding = 'async';
-        img.setAttribute('fetchpriority', idx === 0 ? 'high' : 'low');
-        carousel.appendChild(img);
-      });
-    })();
-  </script>
-
-  <!-- Lógica do contador do pato (sem base de dados; usa localStorage opcionalmente) -->
-  <script>
-    (function(){
-      document.addEventListener('DOMContentLoaded', function(){
-        const widget = document.getElementById('duck-counter');
-        if (!widget) return;
-
-        const countEl = document.getElementById('duck-count');
-        const persistAttr = (widget.getAttribute('data-persist') || 'true') === 'true';
-        const KEY = 'duckCounter:v1';
-        const DAYS_KEY = 'duckCounterDays:v1';
-
-        // iOS/Safari/WebViews podem bloquear localStorage (ex.: modo privado)
-        let storageOk = false;
-        let storage = null;
-        try {
-          storage = window.localStorage;
-          const testKey = '__duck_storage_test__';
-          storage.setItem(testKey, '1');
-          storage.removeItem(testKey);
-          storageOk = true;
-        } catch (_) {
-          storageOk = false;
-          storage = null;
-        }
-
-        const persist = persistAttr && storageOk;
-
-        const calGrid = document.getElementById('duck-cal-grid');
-        const calTitle = document.getElementById('duck-cal-title');
-        const btnPrev = document.getElementById('duck-cal-prev');
-        const btnNext = document.getElementById('duck-cal-next');
-
-        function pad2(n) { return String(n).padStart(2, '0'); }
-        function toISODateLocal(d) {
-          return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
-        }
-
-        function loadDaysMap() {
-          if (!persist) return {};
-          try {
-            const raw = storage.getItem(DAYS_KEY);
-            const obj = raw ? JSON.parse(raw) : {};
-            return (obj && typeof obj === 'object') ? obj : {};
-          } catch (_) {
-            return {};
-          }
-        }
-
-        function saveDaysMap(map) {
-          if (!persist) return;
-          try { storage.setItem(DAYS_KEY, JSON.stringify(map)); } catch (_) {}
-        }
-
-        let daysMap = loadDaysMap();
-        let suppressNextClick = false;
-        let viewYear;
-        let viewMonth;
-        {
-          const now = new Date();
-          viewYear = now.getFullYear();
-          viewMonth = now.getMonth();
-        }
-
-        function renderCalendar() {
-          if (!calGrid || !calTitle) return;
-
-          const monthStart = new Date(viewYear, viewMonth, 1);
-          const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-          // 0=Mon ... 6=Sun
-          const startOffset = (monthStart.getDay() + 6) % 7;
-          const monthName = monthStart.toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' });
-          calTitle.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-
-          calGrid.innerHTML = '';
-
-          for (let i = 0; i < startOffset; i++) {
-            const empty = document.createElement('div');
-            empty.className = 'duck-cal-cell is-empty';
-            empty.setAttribute('aria-hidden', 'true');
-            calGrid.appendChild(empty);
-          }
-
-          for (let day = 1; day <= daysInMonth; day++) {
-            const cellDate = new Date(viewYear, viewMonth, day);
-            const key = toISODateLocal(cellDate);
-            const hits = daysMap[key] ? (parseInt(daysMap[key], 10) || 0) : 0;
-            const capped = Math.min(9, Math.max(0, hits));
-
-            const cell = document.createElement('div');
-            cell.className = 'duck-cal-cell' + (capped > 0 ? ' has-ducks' : '') + (capped === 1 ? ' has-ducks-one' : '');
-            cell.dataset.date = key;
-            cell.setAttribute('role', 'gridcell');
-            cell.setAttribute('tabindex', '0');
-            cell.setAttribute('aria-label', capped > 0
-              ? `Dia ${day}: ${capped} pintainho${capped === 1 ? '' : 's'}`
-              : `Dia ${day}`);
-
-            const dayNum = document.createElement('span');
-            dayNum.className = 'duck-cal-day';
-            dayNum.textContent = String(day);
-            cell.appendChild(dayNum);
-
-            if (capped > 1) {
-              const badge = document.createElement('span');
-              badge.className = 'duck-cal-badge';
-              badge.textContent = String(capped);
-              badge.setAttribute('aria-hidden', 'true');
-              cell.appendChild(badge);
-            }
-            calGrid.appendChild(cell);
-          }
-        }
-
-        let count = 0;
-        if (persist) {
-          let saved = null;
-          try { saved = storage.getItem(KEY); } catch (_) { saved = null; }
-          count = saved ? (parseInt(saved, 10) || 0) : 0;
-        }
-
-        function render() { countEl.textContent = String(count); }
-
-        function addChickToDateKey(dateKey) {
-          const prev = daysMap[dateKey] ? (parseInt(daysMap[dateKey], 10) || 0) : 0;
-          if (prev >= 9) return;
-
-          daysMap[dateKey] = prev + 1;
-          saveDaysMap(daysMap);
-
-          count++;
-          if (persist) {
-            try { storage.setItem(KEY, String(count)); } catch (_) {}
-          }
-
-          render();
-          renderCalendar();
-        }
-
-        function resetDucks() {
-          count = 0;
-          if (persist) {
-            try { storage.setItem(KEY, '0'); } catch (_) {}
-          }
-          daysMap = {};
-          if (persist) {
-            try { storage.removeItem(DAYS_KEY); } catch (_) {}
-          }
-          render();
-          renderCalendar();
-          try {
-            widget.animate(
-              [{ transform: 'scale(1)' }, { transform: 'scale(0.96)' }, { transform: 'scale(1)' }],
-              { duration: 160, easing: 'ease-out' }
-            );
-          } catch(_) {}
-        }
-        function bump() {
-          // marcar o dia de hoje (máximo 9 por dia)
-          const todayKey = toISODateLocal(new Date());
-          const prev = daysMap[todayKey] ? (parseInt(daysMap[todayKey], 10) || 0) : 0;
-          if (prev >= 9) return;
-          addChickToDateKey(todayKey);
-          try {
-            widget.animate(
-              [{ transform: 'scale(1)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }],
-              { duration: 180, easing: 'ease-out' }
-            );
-          } catch(_) {}
-        }
-
-        render();
-        renderCalendar();
-
-        if (calGrid) {
-          calGrid.addEventListener('click', (e) => {
-            const cell = e.target && e.target.closest ? e.target.closest('.duck-cal-cell') : null;
-            if (!cell || cell.classList.contains('is-empty')) return;
-            const dateKey = cell.dataset.date;
-            if (!dateKey) return;
-            addChickToDateKey(dateKey);
-          });
-
-          calGrid.addEventListener('keydown', (e) => {
-            if (e.key !== 'Enter' && e.key !== ' ') return;
-            const cell = e.target && e.target.closest ? e.target.closest('.duck-cal-cell') : null;
-            if (!cell || cell.classList.contains('is-empty')) return;
-            const dateKey = cell.dataset.date;
-            if (!dateKey) return;
-            e.preventDefault();
-            addChickToDateKey(dateKey);
-          });
-        }
-
-        if (btnPrev) {
-          btnPrev.addEventListener('click', () => {
-            viewMonth -= 1;
-            if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
-            renderCalendar();
-          });
-        }
-        if (btnNext) {
-          btnNext.addEventListener('click', () => {
-            viewMonth += 1;
-            if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
-            renderCalendar();
-          });
-        }
-
-        widget.addEventListener('click', e => {
-          e.preventDefault();
-          if (suppressNextClick) { suppressNextClick = false; return; }
-          // Reset rápido (PC) com Shift+Click
-          if (e.shiftKey) { resetDucks(); return; }
-          bump();
-        });
-        widget.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bump(); }
-        });
-
-        // Reset no telemóvel: pressionar e segurar
-        let pressTimer = null;
-        widget.addEventListener('pointerdown', e => {
-          // só botão principal / toque
-          if (e.pointerType === 'mouse' && e.button !== 0) return;
-          pressTimer = window.setTimeout(() => {
-            suppressNextClick = true;
-            resetDucks();
-          }, 10000);
-        });
-        function clearPressTimer() {
-          if (pressTimer) {
-            window.clearTimeout(pressTimer);
-            pressTimer = null;
-          }
-        }
-        widget.addEventListener('pointerup', clearPressTimer);
-        widget.addEventListener('pointercancel', clearPressTimer);
-        widget.addEventListener('pointerleave', clearPressTimer);
-
-        // Reset rápido com botão direito (opcional)
-        widget.addEventListener('contextmenu', e => {
-          e.preventDefault();
-          resetDucks();
-        });
-      });
-    })();
-  </script>
+  <script defer src="board.js"></script>
+  <script defer src="ducks.js"></script>
+  <script defer src="booking.js"></script>
+  <script defer src="photos.js"></script>
+  <script defer src="extra.js"></script>
 
 </body>
 </html>

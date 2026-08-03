@@ -44,34 +44,68 @@ let selectedCards = []; // { index, element }
 let matchedIndices = [];
 let isLocked = false;
 
+let gameInitialized = false;
+
 document.addEventListener('DOMContentLoaded', () => {
-    initGame();
-    
-    document.getElementById('play-again-btn').addEventListener('click', () => {
-        document.getElementById('game-overlay').style.display = 'flex';
-        resetGame();
-    });
+    const openBtn = document.getElementById('open-game-btn');
+    if (openBtn) {
+        openBtn.addEventListener('click', () => {
+            openMemoryGame();
+        });
+    }
 });
 
+// Abre o jogo sob pedido (deixou de ser o ecrã inicial obrigatório)
+function openMemoryGame() {
+    const overlay = document.getElementById('game-overlay');
+    if (!overlay) return;
+    overlay.style.opacity = '1';
+    overlay.style.display = 'flex';
+    if (gameInitialized) {
+        resetGame();
+    } else {
+        initGame();
+        gameInitialized = true;
+    }
+}
+
+// Fecha o jogo sem passar pela proposta (usado pelo botão "×")
+function closeMemoryGame() {
+    const overlay = document.getElementById('game-overlay');
+    if (!overlay) return;
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+    }, 500);
+}
+
 function skipGame() {
-    // Em vez de só esconder, inicia a proposta
+    // Código secreto: continua a revelar a proposta especial
     startProposal();
 }
 
 function gameWon() {
-    // Em vez de só esconder, inicia a proposta
+    // Vitória normal: mostra uma mensagem simples em vez de repetir a proposta
+    const grid = document.getElementById('game-grid');
+    const winMessage = document.getElementById('game-win-message');
     setTimeout(() => {
-        startProposal();
+        if (grid) grid.style.display = 'none';
+        if (winMessage) winMessage.hidden = false;
     }, 500);
 }
 
 function initGame() {
+    const grid = document.getElementById('game-grid');
+    const winMessage = document.getElementById('game-win-message');
+    if (grid) grid.style.display = '';
+    if (winMessage) winMessage.hidden = true;
+
     // 1. Criar pares (duplicar imagens)
     const imagePairs = [...gameImages, ...gameImages];
-    
+
     // 2. Embaralhar
     shuffledImages = shuffleArray(imagePairs);
-    
+
     // 3. Renderizar grelha
     renderGrid();
 }
@@ -80,7 +114,6 @@ function resetGame() {
     selectedCards = [];
     matchedIndices = [];
     isLocked = false;
-    document.getElementById('play-again-btn').style.display = 'none';
     initGame();
 }
 

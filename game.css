@@ -10,12 +10,14 @@
     height: 100%;
     background: linear-gradient(to bottom, #ffdee9, #ffc1cc);
     z-index: 10000;
-    display: flex;
+    display: none; /* Escondido por defeito: o jogo abre-se a pedido, já não bloqueia o site */
     justify-content: center;
     align-items: center;
     overflow-y: auto;
     padding: 20px;
     box-sizing: border-box;
+    opacity: 1;
+    transition: opacity 0.5s;
 }
 
 .game-content {
@@ -127,6 +129,36 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.game-win-message {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.game-win-message p {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5rem;
+    color: #c2185b;
+    margin: 0 0 16px;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.game-win-btn {
+    background: linear-gradient(to right, #ec4899, #e11d48);
+    color: white;
+    padding: 10px 28px;
+    border-radius: 50px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+    transition: transform 0.2s;
+}
+
+.game-win-btn:hover {
+    transform: scale(1.05);
 }
 
 /* Hide spacer cells */
