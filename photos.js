@@ -194,6 +194,93 @@
         startRotation();
     }
 
+    // --- Galeria (modal aberto ao premir 3s numa foto) ---
+    function renderGallery(PhotoStorage) {
+        const grid = document.getElementById('photo-gallery-grid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        if (photos.length === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'photo-gallery-empty';
+            empty.textContent = 'Ainda não há fotos.';
+            grid.appendChild(empty);
+        }
+
+        photos.forEach((photo) => {
+            const item = document.createElement('div');
+            item.className = 'photo-gallery-item' + (photo.pinned ? ' is-pinned' : '');
+
+            const img = document.createElement('img');
+            img.src = photo.url;
+            img.alt = 'Foto';
+            img.addEventListener('click', () => {
+                const idx = photos.findIndex((p) => p.id === photo.id);
+                if (idx !== -1) showIndex(idx);
+                closeGallery();
+            });
+            item.appendChild(img);
+
+            const actions = document.createElement('div');
+            actions.className = 'photo-gallery-actions';
+
+            const pinBtn = document.createElement('button');
+            pinBtn.type = 'button';
+            pinBtn.className = 'pin-btn' + (photo.pinned ? ' active' : '');
+            pinBtn.title = 'Fixar';
+            pinBtn.textContent = '📌';
+            pinBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                await PhotoStorage.setPinned(photo.id);
+                await refresh(PhotoStorage);
+                renderGallery(PhotoStorage);
+            });
+            actions.appendChild(pinBtn);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.title = 'Remover';
+            removeBtn.textContent = '🗑️';
+            removeBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (!confirm('Remover esta foto? Esta ação não pode ser desfeita.')) return;
+                await PhotoStorage.remove(photo.id, photo.storage_path);
+                await refresh(PhotoStorage);
+                renderGallery(PhotoStorage);
+            });
+            actions.appendChild(removeBtn);
+
+            item.appendChild(actions);
+            grid.appendChild(item);
+        });
+
+        const addTile = document.createElement('button');
+        addTile.type = 'button';
+        addTile.className = 'photo-gallery-add';
+        addTile.setAttribute('aria-label', 'Adicionar foto');
+        addTile.textContent = '➕';
+        addTile.addEventListener('click', () => {
+            const fileInput = document.getElementById('photo-file-input');
+            if (fileInput) fileInput.click();
+        });
+        grid.appendChild(addTile);
+    }
+
+    function openGallery(PhotoStorage) {
+        const modal = document.getElementById('photo-gallery-modal');
+        if (!modal) return;
+        renderGallery(PhotoStorage);
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeGallery() {
+        const modal = document.getElementById('photo-gallery-modal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const carousel = document.getElementById('dynamic-carousel');
         if (!carousel) return;
@@ -209,39 +296,42 @@
             if (e.key === 'ArrowLeft') showIndex(currentIndex - 1);
         });
 
-        const addBtn = document.getElementById('photo-add-btn');
-        const fileInput = document.getElementById('photo-file-input');
-        const pinBtn = document.getElementById('photo-pin-btn');
-        const removeBtn = document.getElementById('photo-remove-btn');
+        // Premir 3 segundos na foto -> abre a galeria
+        const LONG_PRESS_MS = 3000;
+        let pressTimer = null;
+        function startPress() {
+            clearTimeout(pressTimer);
+            carousel.classList.add('pressing');
+            pressTimer = setTimeout(() => {
+                carousel.classList.remove('pressing');
+                openGallery(PhotoStorage);
+            }, LONG_PRESS_MS);
+        }
+        function cancelPress() {
+            clearTimeout(pressTimer);
+            carousel.classList.remove('pressing');
+        }
+        carousel.addEventListener('pointerdown', startPress);
+        carousel.addEventListener('pointerup', cancelPress);
+        carousel.addEventListener('pointercancel', cancelPress);
+        carousel.addEventListener('pointerleave', cancelPress);
+        carousel.addEventListener('contextmenu', (e) => e.preventDefault());
 
-        if (addBtn && fileInput) {
-            addBtn.addEventListener('click', () => fileInput.click());
+        const closeBtn = document.getElementById('close-photo-gallery-btn');
+        const overlay = document.querySelector('.photo-gallery-overlay');
+        if (closeBtn) closeBtn.addEventListener('click', closeGallery);
+        if (overlay) overlay.addEventListener('click', closeGallery);
+
+        const fileInput = document.getElementById('photo-file-input');
+        if (fileInput) {
             fileInput.addEventListener('change', async () => {
                 const file = fileInput.files && fileInput.files[0];
                 fileInput.value = '';
                 if (!file) return;
                 const author = (window.getCurrentUser && window.getCurrentUser()) || null;
                 await PhotoStorage.upload(file, author);
-                refresh(PhotoStorage);
-            });
-        }
-
-        if (pinBtn) {
-            pinBtn.addEventListener('click', async () => {
-                const photo = currentPhoto();
-                if (!photo) return;
-                await PhotoStorage.setPinned(photo.id);
-                refresh(PhotoStorage);
-            });
-        }
-
-        if (removeBtn) {
-            removeBtn.addEventListener('click', async () => {
-                const photo = currentPhoto();
-                if (!photo) return;
-                if (!confirm('Remover esta foto? Esta ação não pode ser desfeita.')) return;
-                await PhotoStorage.remove(photo.id, photo.storage_path);
-                refresh(PhotoStorage);
+                await refresh(PhotoStorage);
+                renderGallery(PhotoStorage);
             });
         }
 

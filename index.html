@@ -108,18 +108,24 @@
   </header>
   <main class="container">
     <div class="center-image-container">
-      <!-- Carrossel -->
+      <!-- Carrossel: prime 3 segundos numa foto para abrir a galeria -->
       <div class="carousel" role="region" aria-label="Carrossel de fotos" aria-live="polite" id="dynamic-carousel">
         <!-- imagens serão inseridas por script -->
       </div>
       <span id="photo-pinned-badge" class="photo-pinned-badge" hidden>📌 Fixada</span>
-      <div class="photo-toolbar">
-          <button type="button" id="photo-add-btn" class="photo-toolbar-btn">➕ Adicionar</button>
-          <button type="button" id="photo-pin-btn" class="photo-toolbar-btn">📌 Fixar esta</button>
-          <button type="button" id="photo-remove-btn" class="photo-toolbar-btn danger">🗑️ Remover</button>
-          <input type="file" id="photo-file-input" accept="image/*" hidden />
-      </div>
+      <p class="photo-hint">Mantém premido 3s numa foto para abrir a galeria</p>
       <p class="photo-hint" id="photo-sync-hint"></p>
+    </div>
+
+    <!-- Galeria de fotos (abre ao premir 3s na foto) -->
+    <div id="photo-gallery-modal" class="photo-gallery-modal hidden" aria-hidden="true">
+        <div class="photo-gallery-overlay"></div>
+        <div class="photo-gallery-content">
+            <button id="close-photo-gallery-btn" class="close-quiz-btn" aria-label="Fechar galeria">×</button>
+            <h2 class="photo-gallery-title">Galeria de Fotos 🖼️</h2>
+            <div id="photo-gallery-grid" class="photo-gallery-grid"></div>
+            <input type="file" id="photo-file-input" accept="image/*" hidden />
+        </div>
     </div>
     
     <!-- Botão Quiz movido para aqui -->

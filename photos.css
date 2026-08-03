@@ -1,5 +1,5 @@
 /* ============================ */
-/* Toolbar de gestão de fotos */
+/* Carrossel: badge + dica de "premir 3s" */
 /* ============================ */
 .photo-pinned-badge[hidden] {
     display: none;
@@ -17,38 +17,6 @@
     border-radius: 20px;
 }
 
-.photo-toolbar {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.photo-toolbar-btn {
-    background: #fff0f5;
-    color: #c2185b;
-    border: 1px solid #ffc1cc;
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-}
-
-.photo-toolbar-btn:hover {
-    background: #ffc1cc;
-    color: #fff;
-}
-
-.photo-toolbar-btn.danger:hover {
-    background: #e11d48;
-    color: #fff;
-    border-color: #e11d48;
-}
-
 .photo-hint {
     text-align: center;
     font-size: 0.75rem;
@@ -59,4 +27,149 @@
 
 .center-image-container {
     margin-bottom: 16px;
+}
+
+/* Feedback visual enquanto se prime a foto */
+.carousel.pressing {
+    outline: 3px solid rgba(194, 24, 91, 0.35);
+    outline-offset: 3px;
+    transition: outline-color 3s linear;
+}
+.carousel.pressing::after {
+    content: '';
+}
+
+/* ============================ */
+/* Modal da Galeria de Fotos */
+/* ============================ */
+.photo-gallery-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 1;
+}
+
+.photo-gallery-modal.hidden {
+    display: none;
+}
+
+.photo-gallery-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+}
+
+.photo-gallery-content {
+    position: relative;
+    background: #fff;
+    width: 100%;
+    max-width: 560px;
+    max-height: 85vh;
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 4px solid #ffc1cc;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.photo-gallery-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.2rem;
+    color: #c2185b;
+    margin: 0 0 16px;
+    text-align: center;
+}
+
+.photo-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.photo-gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff0f5;
+    border: 2px solid transparent;
+}
+
+.photo-gallery-item.is-pinned {
+    border-color: #c2185b;
+}
+
+.photo-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    display: block;
+}
+
+.photo-gallery-item .photo-gallery-actions {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    gap: 4px;
+}
+
+.photo-gallery-item button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+.photo-gallery-item .pin-btn.active {
+    background: #c2185b;
+}
+
+.photo-gallery-add {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 2px dashed #ffc1cc;
+    background: #fffafc;
+    color: #c2185b;
+    font-size: 1.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-gallery-add:hover {
+    background: #fff0f5;
+}
+
+.photo-gallery-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #999;
+    font-size: 0.9rem;
+    padding: 10px 0;
+}
+
+@media (max-width: 480px) {
+    .photo-gallery-content {
+        padding: 18px 14px;
+    }
+    .photo-gallery-title {
+        font-size: 1.8rem;
+    }
 }
