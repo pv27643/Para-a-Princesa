@@ -48,14 +48,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const gate = document.getElementById('auth-gate');
         const badge = document.getElementById('auth-badge');
-        const logoutBtn = document.getElementById('auth-logout-btn');
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
-                window.location.reload();
-            });
-        }
 
         // Ainda sem Supabase configurado: não bloquear o site, mostrar tal como está
         if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) {
