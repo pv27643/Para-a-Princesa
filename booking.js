@@ -6,23 +6,40 @@
 // DOMContentLoaded) para garantir que está pronto quando o evento disparar.
 (function () {
     const STORAGE_KEY = 'dateRequests:v1';
+    const MAX_AGE_DAYS_AFTER_EVENT = 3;
     let activeUser = null;
+    let activeBookingStorage = null;
 
     window.addEventListener('love:auth-ready', (e) => {
         activeUser = (e.detail && e.detail.user) || null;
         renderActiveUserPicker();
+        // A lista já pode ter sido desenhada antes do login terminar
+        // (o pedido de rede do PIN demora mais que o render inicial) —
+        // sem isto, os botões Aceitar/Recusar nunca apareciam.
+        if (activeBookingStorage) renderList(activeBookingStorage);
     });
+
+    function cutoffDateISO() {
+        const d = new Date();
+        d.setDate(d.getDate() - MAX_AGE_DAYS_AFTER_EVENT);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
 
     // --- Armazenamento local (fallback sem Supabase) ---
     const LocalBookingStorage = {
         _onChange: null,
         async loadAll() {
+            let list;
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
-                return raw ? JSON.parse(raw) : [];
+                list = raw ? JSON.parse(raw) : [];
             } catch (_) {
-                return [];
+                list = [];
             }
+            const cutoff = cutoffDateISO();
+            const kept = list.filter((r) => r.event_date >= cutoff);
+            if (kept.length !== list.length) await this.save(kept);
+            return kept;
         },
         async save(list) {
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch (_) {}
@@ -58,6 +75,12 @@
     // --- Armazenamento Supabase ---
     const SupabaseBookingStorage = {
         async loadAll() {
+            // Limpa pedidos cuja data já passou há mais de alguns dias
+            await window.supabaseClient
+                .from('date_requests')
+                .delete()
+                .lt('event_date', cutoffDateISO());
+
             const { data, error } = await window.supabaseClient
                 .from('date_requests')
                 .select('*')
@@ -184,6 +207,7 @@
         if (!section) return;
 
         const BookingStorage = getBookingStorage();
+        activeBookingStorage = BookingStorage;
         const hintEl = document.getElementById('booking-sync-hint');
         if (hintEl && !(window.isSupabaseConfigured && window.isSupabaseConfigured())) {
             hintEl.textContent = '💡 Ainda sem Supabase configurado: isto fica só neste telemóvel/navegador.';

@@ -133,6 +133,15 @@
             : LocalPhotoStorage;
     }
 
+    // Usado pelo board.js quando se guarda um desenho: entra na galeria de fotos.
+    window.saveCanvasAsPhoto = async function (blob) {
+        const PhotoStorage = getPhotoStorage();
+        const author = (window.getCurrentUser && window.getCurrentUser()) || null;
+        const file = new File([blob], `quadro-${Date.now()}.png`, { type: 'image/png' });
+        await PhotoStorage.upload(file, author);
+        await refresh(PhotoStorage);
+    };
+
     let photos = [];
     let currentIndex = 0;
     let rotateInterval = null;

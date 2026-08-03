@@ -86,6 +86,33 @@
     border-color: #c2185b;
 }
 
+.board-new-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(to right, #ec4899, #e11d48);
+    color: #fff;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(225, 29, 72, 0.35);
+    transition: transform 0.2s;
+}
+
+.board-new-btn:hover {
+    transform: scale(1.08);
+}
+
+.board-canvas-wrap {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
 .board-canvas {
     display: block;
     width: 100%;
@@ -98,6 +125,12 @@
     touch-action: none;
     -webkit-user-select: none;
     user-select: none;
+    transition: transform 0.45s ease-in, opacity 0.45s ease-in;
+}
+
+.board-canvas.sliding-out {
+    transform: translateX(120%) rotate(8deg);
+    opacity: 0;
 }
 
 .board-hint {

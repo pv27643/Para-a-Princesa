@@ -27,9 +27,13 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify({ strokes }));
             } catch (_) {}
         },
-        subscribe(onNewStroke) {
+        async clearAll() {
+            try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+        },
+        subscribe(onNewStroke, onClear) {
             window.addEventListener('storage', (e) => {
-                if (e.key !== STORAGE_KEY || !e.newValue) return;
+                if (e.key !== STORAGE_KEY) return;
+                if (!e.newValue) { onClear(); return; }
                 try {
                     const strokes = JSON.parse(e.newValue).strokes || [];
                     const last = strokes[strokes.length - 1];
@@ -62,11 +66,18 @@
             });
             if (error) console.warn('Não consegui guardar o traço:', error.message);
         },
-        subscribe(onNewStroke) {
+        async clearAll() {
+            const { error } = await window.supabaseClient.from('board_strokes').delete().not('id', 'is', null);
+            if (error) console.warn('Não consegui limpar o quadro:', error.message);
+        },
+        subscribe(onNewStroke, onClear) {
             window.supabaseClient
                 .channel('board_strokes_changes')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'board_strokes' }, (payload) => {
                     onNewStroke(payload.new);
+                })
+                .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'board_strokes' }, () => {
+                    onClear();
                 })
                 .subscribe();
         }
@@ -162,6 +173,28 @@
         if (btn) btn.setAttribute('aria-pressed', String(on));
     }
 
+    // Guarda o desenho atual na galeria de fotos, depois "arrasta-o para o
+    // lado" e limpa o quadro para começarem um novo.
+    function saveAndStartNew() {
+        if (strokes.length === 0) return;
+        if (!confirm('Guardar este desenho na galeria e começar um novo? O quadro atual será limpo para os dois.')) return;
+
+        canvas.toBlob(async (blob) => {
+            if (blob && window.saveCanvasAsPhoto) {
+                await window.saveCanvasAsPhoto(blob);
+            }
+
+            canvas.classList.add('sliding-out');
+            setTimeout(async () => {
+                await BoardStorage.clearAll();
+                strokes = [];
+                pendingOwn = [];
+                redrawAll();
+                canvas.classList.remove('sliding-out');
+            }, 450);
+        }, 'image/png');
+    }
+
     async function init() {
         canvas = document.getElementById('board-canvas');
         if (!canvas) return;
@@ -191,6 +224,11 @@
             eraserBtn.addEventListener('click', () => setEraser(!isErasing));
         }
 
+        const saveBtn = document.getElementById('board-save-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', saveAndStartNew);
+        }
+
         canvas.addEventListener('pointerdown', pointerDown);
         canvas.addEventListener('pointermove', pointerMove);
         canvas.addEventListener('pointerup', pointerUp);
@@ -208,6 +246,11 @@
             if (isDrawing) return; // não interromper um traço em curso
             strokes.push(newStroke);
             drawStroke(newStroke);
+        }, () => {
+            // O outro utilizador guardou o desenho e começou um novo
+            strokes = [];
+            pendingOwn = [];
+            redrawAll();
         });
 
         strokes = await BoardStorage.loadAll();

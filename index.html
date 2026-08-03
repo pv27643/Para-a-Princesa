@@ -205,9 +205,12 @@
                 <button type="button" class="board-color" data-color="#2a9d8f" style="background:#2a9d8f" aria-label="Verde"></button>
             </div>
             <button type="button" id="board-eraser-btn" class="board-action-btn" aria-pressed="false">🧼 Borracha</button>
+            <button type="button" id="board-save-btn" class="board-new-btn" aria-label="Guardar e começar um novo desenho" title="Guardar e começar um novo desenho">+</button>
         </div>
 
-        <canvas id="board-canvas" class="board-canvas" width="800" height="600"></canvas>
+        <div class="board-canvas-wrap">
+            <canvas id="board-canvas" class="board-canvas" width="800" height="600"></canvas>
+        </div>
         <p class="board-hint" id="board-sync-hint"></p>
     </div>
 
