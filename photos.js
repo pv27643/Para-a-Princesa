@@ -319,6 +319,10 @@
             activePointerId = e.pointerId;
             clearTimeout(pressTimer);
             pressTarget.classList.add('pressing');
+            // Prende o ponteiro a este elemento: sem isto, um pequeno tremor
+            // do dedo pode fazer o browser "perder" o alvo do toque e
+            // disparar pointerleave/pointercancel antes dos 3 segundos.
+            try { pressTarget.setPointerCapture(e.pointerId); } catch (_) {}
             pressTimer = setTimeout(() => {
                 pressTarget.classList.remove('pressing');
                 activePointerId = null;
