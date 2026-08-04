@@ -143,6 +143,13 @@
     margin: 0;
 }
 
+.vinyl-remove-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
 .vinyl-remove-btn {
     background: none;
     border: none;
@@ -155,6 +162,44 @@
 
 .vinyl-remove-btn:hover {
     color: #e11d48;
+}
+
+.vinyl-remove-confirm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.vinyl-remove-question {
+    font-size: 0.72rem;
+    color: #e11d48;
+    font-weight: 600;
+}
+
+.vinyl-remove-yes-btn {
+    background: #e11d48;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.vinyl-remove-no-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.vinyl-hidden {
+    display: none;
 }
 
 .vinyl-form {

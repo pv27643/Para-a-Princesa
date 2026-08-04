@@ -274,12 +274,26 @@
         const PointsStorage = getPointsStorage();
         const special = specialDateInfo();
         const dedupKey = 'daily-' + todayISO();
-        if (special) {
-            await PointsStorage.award(activeUser, activeUser, '🎉 ' + special, 5, dedupKey);
-        } else {
-            await PointsStorage.award(activeUser, activeUser, 'Entrar no site hoje', 1, dedupKey);
-        }
+        const points = special ? 5 : 1;
+        const reason = special ? '🎉 ' + special : 'Entrar no site hoje';
+        const awarded = await PointsStorage.award(activeUser, activeUser, reason, points, dedupKey);
+        if (awarded) notifyDailyPoint(points);
         if (activePointsStorage) refreshPoints();
+    }
+
+    async function notifyDailyPoint(points) {
+        if (!(window.isSupabaseConfigured && window.isSupabaseConfigured())) return;
+        try {
+            await window.supabaseClient.functions.invoke('send-push', {
+                body: {
+                    user: activeUser,
+                    title: `${displayName(activeUser)} resgatou o ponto diário`,
+                    body: `+${points} ponto${points === 1 ? '' : 's'} 🎉`
+                }
+            });
+        } catch (err) {
+            console.warn('Não consegui avisar por notificação:', err);
+        }
     }
 
     // --- Render ---

@@ -5,9 +5,55 @@
 (function () {
     const STORAGE_KEY = 'loveGiftState:v1';
 
+    // Ordem em que as novidades desta sessão vão sendo desbloqueadas no modo
+    // "um por dia" — segue a ordem visual da página: primeiro o mais leve/do
+    // dia a dia (estado, post-its), depois as atividades (quadro, reservar
+    // dia, pontos), e os vinis por último como grande final.
+    const GATED_SECTIONS = ['mood-section', 'notes-section', 'board-section', 'booking-section', 'points-section', 'vinyl-section'];
+    window.LOVE_GATED_SECTIONS = GATED_SECTIONS;
+
     function defaultState() {
         return { maria_seen_intro: false, ivan_seen_intro: false, reveal_mode: null, reveal_started_at: null };
     }
+
+    function daysSince(iso) {
+        return Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    function lockSection(section, daysLeft) {
+        section.classList.add('section-locked');
+        let overlay = section.querySelector(':scope > .gated-lock-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'gated-lock-overlay';
+            section.appendChild(overlay);
+        }
+        overlay.innerHTML = `<span class="gated-lock-icon">🔒</span><p class="gated-lock-text">Desbloqueia daqui a ${daysLeft} dia${daysLeft === 1 ? '' : 's'}</p>`;
+    }
+    function unlockSection(section) {
+        section.classList.remove('section-locked');
+        const overlay = section.querySelector(':scope > .gated-lock-overlay');
+        if (overlay) overlay.remove();
+    }
+
+    async function applySectionGating() {
+        const state = await getGiftStorage().load();
+        if (!state) return;
+        GATED_SECTIONS.forEach((id, idx) => {
+            const section = document.getElementById(id);
+            if (!section) return;
+            let locked = false;
+            let daysLeft = 0;
+            if (state.reveal_mode === 'daily' && state.reveal_started_at) {
+                const elapsed = daysSince(state.reveal_started_at);
+                locked = elapsed < idx;
+                daysLeft = idx - elapsed;
+            }
+            if (locked) lockSection(section, daysLeft);
+            else unlockSection(section);
+        });
+    }
+    window.applyLoveSectionGating = applySectionGating;
 
     const LocalGiftStorage = {
         async load() {
@@ -86,16 +132,19 @@
             }
             await GiftStorage.save(patch);
             hideOverlay();
-            const vinylSection = document.getElementById('vinyl-section');
-            if (vinylSection) setTimeout(() => vinylSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+            await applySectionGating();
+            const firstSection = document.getElementById(GATED_SECTIONS[0]);
+            if (firstSection) setTimeout(() => firstSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
             window.dispatchEvent(new CustomEvent('love:gift-revealed'));
         }
         if (allBtn) allBtn.onclick = () => choose('all');
         if (dailyBtn) dailyBtn.onclick = () => choose('daily');
     }
 
-    window.addEventListener('love:auth-ready', (e) => {
+    window.addEventListener('love:auth-ready', async (e) => {
         const user = e.detail && e.detail.user;
-        if (user) maybeShowGiftIntro(user);
+        if (!user) return;
+        await maybeShowGiftIntro(user);
+        await applySectionGating();
     });
 })();

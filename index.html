@@ -52,8 +52,9 @@
           </div>
           <div id="gift-step-choice" class="gift-step hidden-step">
               <p class="gift-choice-title">Como queres ver os presentes?</p>
+              <p class="gift-choice-desc">O nosso estado, os post-its, o quadro, reservar um dia, pontos e os vinis.</p>
               <button type="button" id="gift-choice-all" class="gift-btn">Quero ver tudo já 👀<span class="gift-btn-sub">sei que és ansiosa 😏</span></button>
-              <button type="button" id="gift-choice-daily" class="gift-btn secondary">Um por dia 🎁</button>
+              <button type="button" id="gift-choice-daily" class="gift-btn secondary">Um por dia 🎁<span class="gift-btn-sub">uma novidade desbloqueada a cada dia</span></button>
           </div>
       </div>
   </div>
@@ -212,7 +213,71 @@
     </div>
     </div>
 
-    <div class="board-section">
+    <div id="mood-section" class="mood-section">
+        <h2 class="mood-title">O Nosso Estado 💭</h2>
+        <p class="mood-subtitle">Dizham como se sentem — feliz, triste, precisam de atenção ou de espaço, o que for.</p>
+
+        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+        <div id="mood-user-picker" class="booking-user-picker" hidden>
+            <span>A agir como:</span>
+            <button type="button" data-user="maria">Maria</button>
+            <button type="button" data-user="ivan">Ivan</button>
+        </div>
+
+        <div class="mood-cards">
+            <div class="mood-card">
+                <span id="mood-emoji-maria" class="mood-card-emoji">❔</span>
+                <span class="mood-card-name">Maria</span>
+                <span id="mood-label-maria" class="mood-card-label">Ainda não disse</span>
+                <span id="mood-ago-maria" class="mood-card-ago"></span>
+            </div>
+            <div class="mood-card">
+                <span id="mood-emoji-ivan" class="mood-card-emoji">❔</span>
+                <span class="mood-card-name">Ivan</span>
+                <span id="mood-label-ivan" class="mood-card-label">Ainda não disse</span>
+                <span id="mood-ago-ivan" class="mood-card-ago"></span>
+            </div>
+        </div>
+
+        <p class="mood-picker-label">Como estás agora?</p>
+        <div id="mood-picker" class="mood-picker"></div>
+
+        <button type="button" id="mood-push-btn" class="mood-push-btn" disabled>🔔 Ativar notificações</button>
+        <p class="mood-push-hint">No iPhone: adiciona o site ao ecrã principal (Partilhar → Adicionar ao Ecrã Principal) e abre a partir daí para as notificações funcionarem.</p>
+
+        <p class="booking-hint" id="mood-sync-hint"></p>
+    </div>
+
+    <div id="notes-section" class="notes-section">
+        <h2 class="notes-title">Mural de Post-its 📌</h2>
+        <p class="notes-subtitle">Escrevam frases um para o outro e afixem no mural.</p>
+
+        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+        <div id="notes-user-picker" class="booking-user-picker" hidden>
+            <span>A agir como:</span>
+            <button type="button" data-user="maria">Maria</button>
+            <button type="button" data-user="ivan">Ivan</button>
+        </div>
+
+        <div class="notes-form">
+            <textarea id="notes-text-input" class="notes-text-input" placeholder="Escreve a tua frase..." maxlength="140" rows="2"></textarea>
+            <div id="notes-color-picker" class="notes-color-picker">
+                <button type="button" class="notes-color active" data-color="#fff6a3" style="background:#fff6a3" aria-label="Amarelo"></button>
+                <button type="button" class="notes-color" data-color="#ffd6e8" style="background:#ffd6e8" aria-label="Rosa"></button>
+                <button type="button" class="notes-color" data-color="#c8e8ff" style="background:#c8e8ff" aria-label="Azul"></button>
+                <button type="button" class="notes-color" data-color="#d4f5d4" style="background:#d4f5d4" aria-label="Verde"></button>
+                <button type="button" class="notes-color" data-color="#e6d9ff" style="background:#e6d9ff" aria-label="Lilás"></button>
+            </div>
+            <button type="button" id="notes-add-btn" class="booking-propose-btn">Afixar</button>
+        </div>
+        <p id="notes-error" class="booking-error"></p>
+
+        <div id="notes-board" class="notes-board"></div>
+
+        <p class="booking-hint" id="notes-sync-hint"></p>
+    </div>
+
+    <div id="board-section" class="board-section">
         <h2 class="board-title">O Nosso Quadro 🎨</h2>
         <p class="board-subtitle">Desenhem um para o outro.</p>
 
@@ -317,70 +382,6 @@
         </div>
 
         <p class="booking-hint" id="points-sync-hint"></p>
-    </div>
-
-    <div id="notes-section" class="notes-section">
-        <h2 class="notes-title">Mural de Post-its 📌</h2>
-        <p class="notes-subtitle">Escrevam frases um para o outro e afixem no mural.</p>
-
-        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
-        <div id="notes-user-picker" class="booking-user-picker" hidden>
-            <span>A agir como:</span>
-            <button type="button" data-user="maria">Maria</button>
-            <button type="button" data-user="ivan">Ivan</button>
-        </div>
-
-        <div class="notes-form">
-            <textarea id="notes-text-input" class="notes-text-input" placeholder="Escreve a tua frase..." maxlength="140" rows="2"></textarea>
-            <div id="notes-color-picker" class="notes-color-picker">
-                <button type="button" class="notes-color active" data-color="#fff6a3" style="background:#fff6a3" aria-label="Amarelo"></button>
-                <button type="button" class="notes-color" data-color="#ffd6e8" style="background:#ffd6e8" aria-label="Rosa"></button>
-                <button type="button" class="notes-color" data-color="#c8e8ff" style="background:#c8e8ff" aria-label="Azul"></button>
-                <button type="button" class="notes-color" data-color="#d4f5d4" style="background:#d4f5d4" aria-label="Verde"></button>
-                <button type="button" class="notes-color" data-color="#e6d9ff" style="background:#e6d9ff" aria-label="Lilás"></button>
-            </div>
-            <button type="button" id="notes-add-btn" class="booking-propose-btn">Afixar</button>
-        </div>
-        <p id="notes-error" class="booking-error"></p>
-
-        <div id="notes-board" class="notes-board"></div>
-
-        <p class="booking-hint" id="notes-sync-hint"></p>
-    </div>
-
-    <div id="mood-section" class="mood-section">
-        <h2 class="mood-title">O Nosso Estado 💭</h2>
-        <p class="mood-subtitle">Dizham como se sentem — feliz, triste, precisam de atenção ou de espaço, o que for.</p>
-
-        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
-        <div id="mood-user-picker" class="booking-user-picker" hidden>
-            <span>A agir como:</span>
-            <button type="button" data-user="maria">Maria</button>
-            <button type="button" data-user="ivan">Ivan</button>
-        </div>
-
-        <div class="mood-cards">
-            <div class="mood-card">
-                <span id="mood-emoji-maria" class="mood-card-emoji">❔</span>
-                <span class="mood-card-name">Maria</span>
-                <span id="mood-label-maria" class="mood-card-label">Ainda não disse</span>
-                <span id="mood-ago-maria" class="mood-card-ago"></span>
-            </div>
-            <div class="mood-card">
-                <span id="mood-emoji-ivan" class="mood-card-emoji">❔</span>
-                <span class="mood-card-name">Ivan</span>
-                <span id="mood-label-ivan" class="mood-card-label">Ainda não disse</span>
-                <span id="mood-ago-ivan" class="mood-card-ago"></span>
-            </div>
-        </div>
-
-        <p class="mood-picker-label">Como estás agora?</p>
-        <div id="mood-picker" class="mood-picker"></div>
-
-        <button type="button" id="mood-push-btn" class="mood-push-btn" disabled>🔔 Ativar notificações</button>
-        <p class="mood-push-hint">No iPhone: adiciona o site ao ecrã principal (Partilhar → Adicionar ao Ecrã Principal) e abre a partir daí para as notificações funcionarem.</p>
-
-        <p class="booking-hint" id="mood-sync-hint"></p>
     </div>
 
     <div id="vinyl-section" class="vinyl-section">

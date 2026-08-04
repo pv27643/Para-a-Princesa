@@ -222,17 +222,52 @@
                 msgEl.textContent = v.message;
                 card.appendChild(msgEl);
 
+                const removeWrap = document.createElement('div');
+                removeWrap.className = 'vinyl-remove-wrap';
+
                 const removeBtn = document.createElement('button');
                 removeBtn.type = 'button';
                 removeBtn.className = 'vinyl-remove-btn';
                 removeBtn.textContent = 'Remover';
-                removeBtn.addEventListener('click', async () => {
-                    if (!confirm('Remover este vinil?')) return;
+
+                const confirmRow = document.createElement('div');
+                confirmRow.className = 'vinyl-remove-confirm vinyl-hidden';
+
+                const question = document.createElement('span');
+                question.className = 'vinyl-remove-question';
+                question.textContent = 'Tens a certeza?';
+
+                const yesBtn = document.createElement('button');
+                yesBtn.type = 'button';
+                yesBtn.className = 'vinyl-remove-yes-btn';
+                yesBtn.textContent = 'Sim, remover';
+
+                const noBtn = document.createElement('button');
+                noBtn.type = 'button';
+                noBtn.className = 'vinyl-remove-no-btn';
+                noBtn.textContent = 'Cancelar';
+
+                confirmRow.appendChild(question);
+                confirmRow.appendChild(yesBtn);
+                confirmRow.appendChild(noBtn);
+
+                removeBtn.addEventListener('click', () => {
+                    removeBtn.classList.add('vinyl-hidden');
+                    confirmRow.classList.remove('vinyl-hidden');
+                });
+                noBtn.addEventListener('click', () => {
+                    confirmRow.classList.add('vinyl-hidden');
+                    removeBtn.classList.remove('vinyl-hidden');
+                });
+                yesBtn.addEventListener('click', async () => {
                     if (currentlyPlaying && currentlyPlaying.id === v.id) stopPlaying();
                     await VinylStorage.remove(v.id, v._photo_path, v._audio_path);
                     refresh();
                 });
-                card.appendChild(removeBtn);
+
+                removeWrap.appendChild(removeBtn);
+                removeWrap.appendChild(confirmRow);
+                card.appendChild(removeWrap);
             } else {
                 const lockLabel = document.createElement('p');
                 lockLabel.className = 'vinyl-locked-label';
@@ -247,7 +282,19 @@
     async function refresh() {
         vinyls = await VinylStorage.loadAll();
         const giftState = window.getGiftState ? await window.getGiftState() : null;
-        renderCollection(giftState);
+        renderCollection(shiftGiftStateForSection(giftState));
+    }
+
+    // A secção dos vinis só desbloqueia (como um todo) no seu dia da vez no
+    // modo "um por dia" — o desbloqueio de 1 vinil/dia dentro da secção só
+    // deve começar a contar a partir desse dia, não desde o início.
+    function shiftGiftStateForSection(giftState) {
+        if (!giftState || giftState.reveal_mode !== 'daily' || !giftState.reveal_started_at) return giftState;
+        const order = window.LOVE_GATED_SECTIONS || [];
+        const idx = order.indexOf('vinyl-section');
+        if (idx <= 0) return giftState;
+        const shifted = new Date(new Date(giftState.reveal_started_at).getTime() + idx * 86400000).toISOString();
+        return Object.assign({}, giftState, { reveal_started_at: shifted });
     }
 
     document.addEventListener('DOMContentLoaded', () => {

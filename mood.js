@@ -151,9 +151,10 @@
     // --- Notificação push ---
     async function notifyOther(mood) {
         if (!(window.isSupabaseConfigured && window.isSupabaseConfigured())) return;
+        const name = activeUser === 'maria' ? 'Maria' : 'Ivan';
         try {
-            await window.supabaseClient.functions.invoke('send-mood-push', {
-                body: { user: activeUser, label: mood.emoji + ' ' + mood.label }
+            await window.supabaseClient.functions.invoke('send-push', {
+                body: { user: activeUser, title: `${name} mudou de estado`, body: mood.emoji + ' ' + mood.label }
             });
         } catch (err) {
             console.warn('Não consegui avisar por notificação:', err);
