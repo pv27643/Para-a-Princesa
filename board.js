@@ -149,6 +149,26 @@
     let pendingOwn = []; // traços enviados por nós, à espera do "eco" do Realtime
     let unsubscribeStrokes = null;
 
+    // "Armar" o quadro: só depois de um toque/clique é que o próximo gesto
+    // desenha de facto — evita riscar o desenho sem querer ao fazer scroll
+    // com o dedo por cima. Desarma sozinho ao fim de uns segundos parado.
+    let armed = false;
+    let disarmTimer = null;
+    const DISARM_MS = 4000;
+
+    function armCanvas() {
+        armed = true;
+        if (canvasWrap) canvasWrap.classList.add('armed');
+        scheduleDisarm();
+    }
+    function scheduleDisarm() {
+        clearTimeout(disarmTimer);
+        disarmTimer = setTimeout(() => {
+            armed = false;
+            if (canvasWrap) canvasWrap.classList.remove('armed');
+        }, DISARM_MS);
+    }
+
     function currentBoard() {
         return boards[currentIndex] || null;
     }
@@ -194,7 +214,14 @@
     }
 
     function pointerDown(evt) {
+        if (!armed) {
+            // Primeiro toque só "arma" o quadro; não desenha ainda. Assim,
+            // passar o dedo por cima a fazer scroll não risca nada.
+            armCanvas();
+            return;
+        }
         evt.preventDefault();
+        scheduleDisarm();
         isDrawing = true;
         const size = isErasing ? 28 : 5;
         currentStroke = { color: activeColor, size, erase: isErasing, points: [getCanvasPoint(evt)] };
@@ -205,6 +232,7 @@
     function pointerMove(evt) {
         if (!isDrawing || !currentStroke) return;
         evt.preventDefault();
+        scheduleDisarm();
         currentStroke.points.push(getCanvasPoint(evt));
         redrawAll();
         drawStroke(currentStroke);
@@ -213,6 +241,7 @@
     function pointerUp() {
         if (!isDrawing || !currentStroke) return;
         isDrawing = false;
+        scheduleDisarm();
         const stroke = currentStroke;
         currentStroke = null;
         strokes.push(stroke);
@@ -313,7 +342,7 @@
 
     async function init() {
         canvas = document.getElementById('board-canvas');
-        canvasWrap = document.getElementById('board-canvas') && document.querySelector('.board-canvas-wrap');
+        canvasWrap = document.getElementById('board-canvas-wrap');
         if (!canvas) return;
         ctx = canvas.getContext('2d');
         BoardStorage = getBoardStorage();
