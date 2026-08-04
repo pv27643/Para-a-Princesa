@@ -59,9 +59,12 @@
             await this._save(list.filter((p) => p.id !== id));
             if (this._onChange) this._onChange();
         },
-        async setPinned(id) {
+        async setPinned(id, pin) {
             const list = await this.loadAll();
-            list.forEach((p) => { p.pinned = p.id === id; });
+            list.forEach((p) => {
+                if (p.id === id) p.pinned = pin;
+                else if (pin) p.pinned = false;
+            });
             await this._save(list);
             if (this._onChange) this._onChange();
         },
@@ -114,10 +117,12 @@
             const { error } = await window.supabaseClient.from('photos').delete().eq('id', id);
             if (error) console.warn('Não consegui remover a foto:', error.message);
         },
-        async setPinned(id) {
-            await window.supabaseClient.from('photos').update({ pinned: false }).eq('pinned', true);
-            const { error } = await window.supabaseClient.from('photos').update({ pinned: true }).eq('id', id);
-            if (error) console.warn('Não consegui fixar a foto:', error.message);
+        async setPinned(id, pin) {
+            if (pin) {
+                await window.supabaseClient.from('photos').update({ pinned: false }).eq('pinned', true);
+            }
+            const { error } = await window.supabaseClient.from('photos').update({ pinned: pin }).eq('id', id);
+            if (error) console.warn('Não consegui ' + (pin ? 'fixar' : 'desafixar') + ' a foto:', error.message);
         },
         subscribe(onChange) {
             window.supabaseClient
@@ -230,11 +235,11 @@
             const pinBtn = document.createElement('button');
             pinBtn.type = 'button';
             pinBtn.className = 'pin-btn' + (photo.pinned ? ' active' : '');
-            pinBtn.title = 'Fixar';
-            pinBtn.textContent = '📌';
+            pinBtn.title = photo.pinned ? 'Desafixar' : 'Fixar';
+            pinBtn.textContent = photo.pinned ? '📌' : '📍';
             pinBtn.addEventListener('click', async (e) => {
                 e.stopPropagation();
-                await PhotoStorage.setPinned(photo.id);
+                await PhotoStorage.setPinned(photo.id, !photo.pinned);
                 await refresh(PhotoStorage);
                 renderGallery(PhotoStorage);
             });
