@@ -108,7 +108,11 @@
       </div>
       <!-- Camada transparente por cima do carrossel só para apanhar o gesto de premir;
            fica fora do #dynamic-carousel porque este é limpo (innerHTML) a cada refresh -->
-      <div id="carousel-press-target" class="carousel-press-target" aria-hidden="true"></div>
+      <div id="carousel-press-target" class="carousel-press-target" aria-hidden="true">
+          <svg id="carousel-press-ring" class="carousel-press-ring" viewBox="0 0 44 44" aria-hidden="true">
+              <circle cx="22" cy="22" r="19" />
+          </svg>
+      </div>
       <p class="photo-hint">Mantém premido 3s numa foto para abrir a galeria</p>
       <p class="photo-hint" id="photo-sync-hint"></p>
     </div>

@@ -43,6 +43,42 @@
     outline-offset: -3px;
 }
 
+/* Anel de progresso, bem visível, para se saber que o "premir" está a ser
+   contado (sem isto era fácil pensar que não estava a acontecer nada). */
+.carousel-press-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+}
+
+.carousel-press-ring circle {
+    fill: rgba(0, 0, 0, 0.35);
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 119.4;
+    stroke-dashoffset: 119.4;
+}
+
+.carousel-press-target.pressing .carousel-press-ring {
+    opacity: 1;
+}
+
+.carousel-press-target.pressing .carousel-press-ring circle {
+    animation: carousel-press-fill 3s linear forwards;
+}
+
+@keyframes carousel-press-fill {
+    from { stroke-dashoffset: 119.4; }
+    to { stroke-dashoffset: 0; }
+}
+
 /* ============================ */
 /* Modal da Galeria de Fotos */
 /* ============================ */
