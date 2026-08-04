@@ -236,32 +236,37 @@
         if (nextBtn) nextBtn.disabled = currentIndex >= boards.length - 1;
     }
 
+    // navBusy evita que dois cliques rápidos nas setas se cruzem a meio da
+    // animação e deixem o quadro com o traço/posição trocados ("desformatado").
+    let navBusy = false;
+
     async function showBoard(index, direction) {
+        if (navBusy) return;
         if (index < 0 || index >= boards.length) return;
-        currentIndex = index;
-        const board = currentBoard();
-        updateNavUI();
+        navBusy = true;
+        try {
+            currentIndex = index;
+            const board = currentBoard();
+            updateNavUI();
 
-        if (unsubscribeStrokes) { unsubscribeStrokes(); unsubscribeStrokes = null; }
+            if (unsubscribeStrokes) { unsubscribeStrokes(); unsubscribeStrokes = null; }
 
-        if (canvas && direction) {
-            canvas.classList.remove('slide-in-left', 'slide-in-right');
-            canvas.classList.add(direction === 'left' ? 'slide-out-left' : 'slide-out-right');
-            await new Promise((r) => setTimeout(r, 180));
-        }
+            pendingOwn = [];
+            strokes = await BoardStorage.loadStrokes(board.id);
+            redrawAll();
 
-        pendingOwn = [];
-        strokes = await BoardStorage.loadStrokes(board.id);
-        redrawAll();
+            if (canvas && direction) {
+                canvas.classList.remove('slide-in-left', 'slide-in-right');
+                void canvas.offsetWidth; // força reflow para a animação recomeçar sempre
+                canvas.classList.add(direction === 'left' ? 'slide-in-left' : 'slide-in-right');
+                setTimeout(() => canvas.classList.remove('slide-in-left', 'slide-in-right'), 250);
+            }
 
-        if (canvas && direction) {
-            canvas.classList.remove('slide-out-left', 'slide-out-right');
-            canvas.classList.add(direction === 'left' ? 'slide-in-left' : 'slide-in-right');
-            setTimeout(() => canvas.classList.remove('slide-in-left', 'slide-in-right'), 220);
-        }
-
-        if (BoardStorage.subscribeToStrokes) {
-            unsubscribeStrokes = BoardStorage.subscribeToStrokes(board.id, handleIncomingStroke);
+            if (BoardStorage.subscribeToStrokes) {
+                unsubscribeStrokes = BoardStorage.subscribeToStrokes(board.id, handleIncomingStroke);
+            }
+        } finally {
+            navBusy = false;
         }
     }
 

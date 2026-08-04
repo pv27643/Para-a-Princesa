@@ -162,18 +162,9 @@
     touch-action: none;
     -webkit-user-select: none;
     user-select: none;
-    transition: transform 0.18s ease-in, opacity 0.18s ease-in;
 }
 
 /* Animação ao navegar entre quadros */
-.board-canvas.slide-out-left {
-    transform: translateX(60%);
-    opacity: 0;
-}
-.board-canvas.slide-out-right {
-    transform: translateX(-60%);
-    opacity: 0;
-}
 .board-canvas.slide-in-left {
     animation: board-slide-in-left 0.22s ease-out;
 }
