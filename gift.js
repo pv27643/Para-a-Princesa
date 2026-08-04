@@ -123,13 +123,10 @@
         const allBtn = document.getElementById('gift-choice-all');
         const dailyBtn = document.getElementById('gift-choice-daily');
         async function choose(mode) {
-            const patch = { [seenKey]: true };
-            // A escolha (tudo/um por dia) só conta na primeira vez que alguém
-            // a faz — não a voltamos a sobrescrever numa pré-visualização.
-            if (!state.reveal_mode) {
-                patch.reveal_mode = mode;
-                patch.reveal_started_at = new Date().toISOString();
-            }
+            // A escolha mais recente é sempre a que vale (é um estado
+            // partilhado): mudar de "um por dia" para "tudo já" (ou o
+            // contrário) reinicia também a contagem dos dias.
+            const patch = { [seenKey]: true, reveal_mode: mode, reveal_started_at: new Date().toISOString() };
             await GiftStorage.save(patch);
             hideOverlay();
             await applySectionGating();
