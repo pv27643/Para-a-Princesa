@@ -168,33 +168,34 @@
 
   <section class="special-dates">
     <h2>Datas que faço questão de lembrar</h2>
-    <div class="dates-container">
-      <!-- Ordenadas cronologicamente ao longo do ano -->
-      <div class="date-card" data-date="06-29">
-        <div class="date-number">29</div>
-        <div class="date-month">Junho</div>
-        <div class="date-description">Dia que nos conhecemos</div>
-      </div>
-      <div class="date-card" data-date="07-02">
-        <div class="date-number">02</div>
-        <div class="date-month">Julho</div>
-        <div class="date-description">Primeiro beijo — 14:55</div>
-      </div>
-      <div class="date-card" data-date="09-15">
-        <div class="date-number">15</div>
-        <div class="date-month">Setembro</div>
-        <div class="date-description">Aniversário do Ivan</div>
-      </div>
-      <div class="date-card" data-date="10-18">
-        <div class="date-number">18</div>
-        <div class="date-month">Outubro</div>
-        <div class="date-description">Aniversário da Princesa</div>
-      </div>
-      <div class="date-card" data-date="12-26">
-        <div class="date-number">26</div>
-        <div class="date-month">Dezembro</div>
-        <div class="date-description">Dia do pedido de namoro</div>
-      </div>
+
+    <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+    <div id="dates-user-picker" class="booking-user-picker" hidden>
+        <span>A agir como:</span>
+        <button type="button" data-user="maria">Maria</button>
+        <button type="button" data-user="ivan">Ivan</button>
+    </div>
+
+    <div id="dates-container" class="dates-container">
+      <!-- Cartões desenhados por dates.js, ordenados por dia/mês -->
+    </div>
+
+    <div class="dates-form-wrap">
+        <button type="button" id="dates-open-form-btn" class="mood-push-btn">➕ Adicionar Data</button>
+
+        <div id="dates-form" class="vinyl-form vinyl-form-collapsed dates-form">
+            <label class="vinyl-field-label">Dia
+                <input type="date" id="dates-day-input" class="vinyl-month-input" />
+            </label>
+            <label class="vinyl-field-label">O que se celebra
+                <input type="text" id="dates-desc-input" class="vinyl-month-input" placeholder="Ex: Aniversário de namoro" maxlength="120" />
+            </label>
+            <div class="vinyl-form-actions">
+                <button type="button" id="dates-add-btn" class="booking-propose-btn">Guardar</button>
+                <button type="button" id="dates-cancel-btn" class="board-action-btn">Cancelar</button>
+            </div>
+        </div>
+        <p id="dates-error" class="booking-error"></p>
     </div>
 
     <div class="duck-calendar-wrap">
@@ -491,6 +492,7 @@
   <script defer src="proposal.js"></script>
   <script defer src="board.js"></script>
   <script defer src="ducks.js"></script>
+  <script defer src="dates.js"></script>
   <script defer src="booking.js"></script>
   <script defer src="photos.js"></script>
   <script defer src="points.js"></script>

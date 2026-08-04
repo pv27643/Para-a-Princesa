@@ -341,6 +341,26 @@ create policy "gift_state: atualizar livre" on gift_state
   for update using (true);
 
 -- ------------------------------------------------------------
+-- 13) Datas especiais editáveis ("Datas que faço questão de lembrar")
+-- ------------------------------------------------------------
+create table if not exists special_dates (
+  id bigint generated always as identity primary key,
+  month_day text not null check (month_day ~ '^\d{2}-\d{2}$'),
+  description text not null,
+  created_by text check (created_by in ('maria', 'ivan')),
+  created_at timestamptz not null default now()
+);
+
+alter table special_dates enable row level security;
+
+create policy "special_dates: leitura livre" on special_dates
+  for select using (true);
+create policy "special_dates: inserir livre" on special_dates
+  for insert with check (true);
+create policy "special_dates: apagar livre" on special_dates
+  for delete using (true);
+
+-- ------------------------------------------------------------
 -- 12) Ativar Realtime nas tabelas que precisam de atualizar ao vivo
 -- ------------------------------------------------------------
 alter publication supabase_realtime add table boards;
@@ -354,6 +374,7 @@ alter publication supabase_realtime add table profiles;
 alter publication supabase_realtime add table sticky_notes;
 alter publication supabase_realtime add table vinyls;
 alter publication supabase_realtime add table gift_state;
+alter publication supabase_realtime add table special_dates;
 
 -- ============================================================
 -- NOTA DE SEGURANÇA

@@ -27,16 +27,12 @@
         const d = new Date();
         return `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     }
-    function specialDateInfo() {
-        const cards = document.querySelectorAll('.date-card');
+    async function specialDateInfo() {
+        if (!window.getSpecialDates) return null;
         const md = todayMonthDay();
-        for (const card of cards) {
-            if (card.dataset.date === md) {
-                const desc = card.querySelector('.date-description');
-                return desc ? desc.textContent.trim() : 'Data especial';
-            }
-        }
-        return null;
+        const dates = await window.getSpecialDates();
+        const match = dates.find((d) => d.month_day === md);
+        return match ? match.description : null;
     }
 
     // --- Armazenamento local (fallback sem Supabase) ---
@@ -272,7 +268,7 @@
     async function awardDailyLoginBonus() {
         if (!activeUser) return;
         const PointsStorage = getPointsStorage();
-        const special = specialDateInfo();
+        const special = await specialDateInfo();
         const dedupKey = 'daily-' + todayISO();
         const points = special ? 5 : 1;
         const reason = special ? '🎉 ' + special : 'Entrar no site hoje';
@@ -281,19 +277,29 @@
         if (activePointsStorage) refreshPoints();
     }
 
-    async function notifyDailyPoint(points) {
+    async function notifyOther(title, body) {
         if (!(window.isSupabaseConfigured && window.isSupabaseConfigured())) return;
         try {
             await window.supabaseClient.functions.invoke('send-push', {
-                body: {
-                    user: activeUser,
-                    title: `${displayName(activeUser)} resgatou o ponto diário`,
-                    body: `+${points} ponto${points === 1 ? '' : 's'} 🎉`
-                }
+                body: { user: activeUser, title, body }
             });
         } catch (err) {
             console.warn('Não consegui avisar por notificação:', err);
         }
+    }
+
+    async function notifyDailyPoint(points) {
+        await notifyOther(
+            `${displayName(activeUser)} resgatou o ponto diário`,
+            `+${points} ponto${points === 1 ? '' : 's'} 🎉`
+        );
+    }
+
+    async function notifyTradeProposed(description, cost) {
+        await notifyOther(
+            `${displayName(activeUser)} propôs uma troca`,
+            `${description} · ${cost} pontos`
+        );
     }
 
     // --- Render ---
@@ -533,6 +539,7 @@
                 if (tradeDescInput) tradeDescInput.value = '';
                 if (tradeCostInput) tradeCostInput.value = '';
                 refreshTrades();
+                notifyTradeProposed(description, cost);
             });
         }
 

@@ -130,6 +130,21 @@
         return user === 'maria' ? 'Maria' : (user === 'ivan' ? 'Ivan' : user);
     }
 
+    async function notifyDateProposed(eventDate, note) {
+        if (!(window.isSupabaseConfigured && window.isSupabaseConfigured())) return;
+        try {
+            await window.supabaseClient.functions.invoke('send-push', {
+                body: {
+                    user: activeUser,
+                    title: `${displayName(activeUser)} propôs um dia`,
+                    body: formatDate(eventDate) + (note ? ' · ' + note : '')
+                }
+            });
+        } catch (err) {
+            console.warn('Não consegui avisar por notificação:', err);
+        }
+    }
+
     function statusLabel(status) {
         if (status === 'accepted') return '✅ Aceite';
         if (status === 'declined') return '❌ Recusado';
@@ -244,10 +259,12 @@
                     return;
                 }
                 if (errorEl) errorEl.textContent = '';
-                await BookingStorage.propose(eventDate, noteInput ? noteInput.value.trim() : '', activeUser);
+                const note = noteInput ? noteInput.value.trim() : '';
+                await BookingStorage.propose(eventDate, note, activeUser);
                 if (dateInput) dateInput.value = '';
                 if (noteInput) noteInput.value = '';
                 renderList(BookingStorage);
+                notifyDateProposed(eventDate, note);
             });
         }
 

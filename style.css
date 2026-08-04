@@ -165,6 +165,21 @@ header h1 {
     line-height: 1.4;
 }
 
+.date-remove-wrap {
+    margin-top: 12px;
+}
+
+.dates-form-wrap {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.dates-form {
+    max-width: 340px;
+    margin: 12px auto 0;
+    text-align: left;
+}
+
 .digital-gift {
     margin-top: 40px;
     padding: 20px;
