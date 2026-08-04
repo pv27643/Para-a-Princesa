@@ -320,9 +320,11 @@
 
         const hintEl = document.getElementById('board-sync-hint');
         if (hintEl) {
-            hintEl.textContent = (window.isSupabaseConfigured && window.isSupabaseConfigured())
+            const configured = window.isSupabaseConfigured && window.isSupabaseConfigured();
+            hintEl.textContent = configured
                 ? ''
                 : '💡 Ainda sem Supabase configurado: o quadro só fica guardado neste telemóvel/navegador.';
+            hintEl.hidden = configured;
         }
 
         const colorBtns = document.querySelectorAll('.board-color');
