@@ -1,0 +1,225 @@
+/* ============================ */
+/* Pontos e Trocas */
+/* ============================ */
+.points-section {
+    background: #fff;
+    width: 100%;
+    max-width: 640px;
+    margin: 30px auto 0;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(194, 24, 91, 0.15);
+    border: 4px solid #ffc1cc;
+    box-sizing: border-box;
+}
+
+.points-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.4rem;
+    color: #c2185b;
+    margin: 0 0 6px;
+    text-align: center;
+}
+
+.points-subtitle {
+    text-align: center;
+    color: #777;
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.points-scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 18px;
+}
+
+.points-score-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.points-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff0f5;
+    border: 2px solid #ffc1cc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.15s ease;
+}
+
+.points-avatar:hover {
+    transform: scale(1.05);
+}
+
+.points-avatar.has-photo {
+    font-size: 0;
+}
+
+.points-score-name {
+    font-weight: 600;
+    color: #c2185b;
+    font-size: 0.9rem;
+}
+
+.points-score-total {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    color: #c2185b;
+}
+
+.points-score-total::after {
+    content: ' pts';
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.7rem;
+    color: #999;
+}
+
+.points-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.points-reason-input,
+.points-amount-input,
+.points-target-select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 2px solid #ffc1cc;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+}
+
+.points-reason-input {
+    flex: 1 1 160px;
+    min-width: 140px;
+}
+
+.points-amount-input {
+    width: 80px;
+}
+
+.points-target-select {
+    flex: 0 0 auto;
+}
+
+.points-history {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.points-empty {
+    text-align: center;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.points-history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fffafc;
+    border: 1px solid #ffeef2;
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.points-history-amount {
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 2.5em;
+    text-align: center;
+    border-radius: 20px;
+    padding: 4px 8px;
+}
+
+.points-history-amount.positive {
+    color: #2a9d8f;
+    background: rgba(42, 157, 143, 0.12);
+}
+
+.points-history-amount.negative {
+    color: #e11d48;
+    background: rgba(225, 29, 72, 0.1);
+}
+
+.points-history-info {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.trades-block {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed #ffc1cc;
+}
+
+.trades-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    color: #c2185b;
+    text-align: center;
+    margin: 0 0 12px;
+}
+
+.trades-list {
+    margin-top: 12px;
+}
+
+.trade-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: #fffafc;
+    border: 1px solid #ffeef2;
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.trade-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: #444;
+}
+
+.trade-meta {
+    color: #999;
+    font-size: 0.78rem;
+}
+
+.trade-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+@media (max-width: 480px) {
+    .points-section {
+        padding: 18px 14px;
+    }
+    .points-title {
+        font-size: 2rem;
+    }
+    .points-scoreboard {
+        gap: 16px;
+    }
+}

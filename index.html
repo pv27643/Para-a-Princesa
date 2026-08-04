@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="auth.css" />
   <link rel="stylesheet" href="booking.css" />
   <link rel="stylesheet" href="photos.css" />
+  <link rel="stylesheet" href="points.css" />
   <meta property="og:title" content="Amo-te, Maria ❤️" />
   <meta property="og:description" content="O nosso cantinho: dias juntos, datas especiais e memórias." />
   <meta property="og:type" content="website" />
@@ -128,11 +129,7 @@
         </div>
     </div>
     
-    <!-- Botão Quiz movido para aqui -->
     <div style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-        <button id="open-quiz-btn" class="quiz-btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease;">
-            💘 Quiz: O Nosso Dia Ideal
-        </button>
         <button id="open-game-btn" class="btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease;">
             🧩 Jogo da Memória
         </button>
@@ -248,57 +245,63 @@
         <div id="booking-list" class="booking-list"></div>
         <p class="booking-hint" id="booking-sync-hint"></p>
     </div>
+
+    <div id="points-section" class="points-section">
+        <h2 class="points-title">Pontos e Trocas 💖</h2>
+        <p class="points-subtitle">Entrar no site dá 1 ponto por dia (5 em datas especiais). Dá pontos um ao outro por gestos bonitos, e troca-os pelo que quiserem.</p>
+
+        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+        <div id="points-user-picker" class="booking-user-picker" hidden>
+            <span>A agir como:</span>
+            <button type="button" data-user="maria">Maria</button>
+            <button type="button" data-user="ivan">Ivan</button>
+        </div>
+
+        <div class="points-scoreboard">
+            <div class="points-score-card">
+                <div id="points-avatar-maria" class="points-avatar" role="button" tabindex="0" aria-label="Mudar foto da Maria">👩</div>
+                <span class="points-score-name">Maria</span>
+                <span id="points-total-maria" class="points-score-total">0</span>
+            </div>
+            <div class="points-score-card">
+                <div id="points-avatar-ivan" class="points-avatar" role="button" tabindex="0" aria-label="Mudar foto do Ivan">🧑</div>
+                <span class="points-score-name">Ivan</span>
+                <span id="points-total-ivan" class="points-score-total">0</span>
+            </div>
+            <input type="file" id="points-avatar-input" accept="image/*" hidden />
+        </div>
+
+        <div class="points-form">
+            <input type="text" id="points-reason-input" class="points-reason-input" placeholder="Motivo: fez o jantar, foi fofo(a)..." maxlength="120" />
+            <input type="number" id="points-amount-input" class="points-amount-input" value="1" min="1" max="99" />
+            <select id="points-target-select" class="points-target-select">
+                <option value="">Para quem?</option>
+                <option value="maria">Maria</option>
+                <option value="ivan">Ivan</option>
+            </select>
+            <button type="button" id="points-award-btn" class="booking-propose-btn">Atribuir</button>
+        </div>
+        <p id="points-error" class="booking-error"></p>
+
+        <div id="points-history" class="points-history"></div>
+
+        <div class="trades-block">
+            <h3 class="trades-title">Loja de Trocas</h3>
+            <div class="points-form">
+                <input type="text" id="trade-desc-input" class="points-reason-input" placeholder="O que queres trocar? Ex: noite de filme à escolha" maxlength="120" />
+                <input type="number" id="trade-cost-input" class="points-amount-input" placeholder="Custo" min="1" max="999" />
+                <button type="button" id="trade-propose-btn" class="booking-propose-btn">Propor</button>
+            </div>
+            <p id="trade-error" class="booking-error"></p>
+            <div id="trades-list" class="booking-list trades-list"></div>
+        </div>
+
+        <p class="booking-hint" id="points-sync-hint"></p>
+    </div>
   </section>
 
 
 
-
-  <!-- Modal do Quiz -->
-  <div id="quiz-modal" class="quiz-modal hidden" aria-hidden="true">
-      <div class="quiz-modal-overlay"></div>
-      <div class="quiz-modal-content">
-          <button id="close-quiz-btn" class="close-quiz-btn" aria-label="Fechar Quiz">×</button>
-          
-          <div class="quiz-container" style="background: transparent; box-shadow: none; min-height: auto; padding: 0;">
-            <h2 style="font-size: 2rem; margin-bottom: 20px;">Quiz do Dia dos Namorados 💘</h2>
-
-            <!-- START SCREEN -->
-            <div id="quiz-start-screen" class="quiz-screen active">
-                <p class="quiz-intro">Descobre o vosso perfil romântico ideal e um plano perfeito para um dia inesquecível.</p>
-                <button id="start-quiz-btn" class="quiz-btn primary">Começar Quiz</button>
-            </div>
-
-            <!-- QUESTION SCREEN -->
-            <div id="quiz-question-screen" class="quiz-screen hidden">
-                <div class="quiz-header">
-                    <span id="quiz-progress">Pergunta 1 de 8</span>
-                    <div class="quiz-timer-container">
-                        <div id="quiz-timer-bar" class="quiz-timer-bar"></div>
-                    </div>
-                    <span id="quiz-timer-text">10s</span>
-                </div>
-                <h3 id="quiz-question-text" class="quiz-question">Pergunta aqui?</h3>
-                <div class="quiz-options">
-                    <!-- options generated by JS -->
-                </div>
-            </div>
-
-            <!-- RESULTS SCREEN -->
-            <div id="quiz-result-screen" class="quiz-screen hidden">
-                <h3 class="result-title">O Nosso Dia Ideal</h3>
-                <div class="result-profiles">
-                    <p><strong>O Nosso Resultado:</strong> <br><span id="result-dominant" style="color:#d63384; font-size: 1.2rem;">X</span></p>
-                    <p><strong>Com um toque de:</strong> <br><span id="result-secondary" style="color:#ff6f91;">Y</span></p>
-                    <p style="margin-top: 15px; font-size: 0.9rem; color: #888;"><strong>A vossa sequência:</strong> <br><span id="result-sequence" style="font-family: monospace; letter-spacing: 2px; color: #c2185b; font-weight: bold;"></span></p>
-                </div>
-                <div id="result-calendar" class="result-calendar" style="max-height: 300px; overflow-y: auto;">
-                    <!-- calendar content -->
-                </div>
-                <button id="restart-quiz-btn" class="quiz-btn primary">Recomeçar Quiz</button>
-            </div>
-          </div>
-      </div>
-  </div>
 
   <section class="digital-gift">
     <!-- Botão visível/clicável -->
@@ -361,6 +364,7 @@
   <script defer src="ducks.js"></script>
   <script defer src="booking.js"></script>
   <script defer src="photos.js"></script>
+  <script defer src="points.js"></script>
   <script defer src="extra.js"></script>
 
 </body>
