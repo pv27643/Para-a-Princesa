@@ -278,6 +278,7 @@ create policy "sticky_notes: apagar livre" on sticky_notes
 alter table profiles add column if not exists mood_key text;
 alter table profiles add column if not exists mood_updated_at timestamptz;
 alter table profiles add column if not exists mood_custom_text text; -- usado quando mood_key = 'custom'
+alter table profiles add column if not exists mood_custom_emoji text; -- idem, emoji escolhido à mão
 
 create table if not exists push_subscriptions (
   id bigint generated always as identity primary key,
