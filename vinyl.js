@@ -126,6 +126,7 @@
         return div.innerHTML;
     }
     function daysSince(iso) {
+        if (window.loveDaysSince) return window.loveDaysSince(iso);
         return Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24));
     }
 

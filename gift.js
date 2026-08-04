@@ -16,9 +16,16 @@
         return { maria_seen_intro: false, ivan_seen_intro: false, reveal_mode: null, reveal_started_at: null };
     }
 
+    // Contagem por dia de calendário (não por 24h a rolar) — os novos
+    // desbloqueios acontecem à meia-noite, não à hora em que alguém escolheu.
     function daysSince(iso) {
-        return Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24));
+        const start = new Date(iso);
+        const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+        const now = new Date();
+        const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        return Math.round((nowMidnight - startMidnight) / (1000 * 60 * 60 * 24));
     }
+    window.loveDaysSince = daysSince;
 
     function lockSection(section, daysLeft) {
         section.classList.add('section-locked');
