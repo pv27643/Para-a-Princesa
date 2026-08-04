@@ -213,7 +213,9 @@ create policy "trades: atualizar livre" on trades
 -- ------------------------------------------------------------
 create table if not exists profiles (
   name text primary key check (name in ('maria', 'ivan')),
-  avatar_path text
+  avatar_path text,
+  mood_key text,
+  mood_updated_at timestamptz
 );
 
 insert into profiles (name) values ('maria'), ('ivan')
@@ -224,6 +226,29 @@ alter table profiles enable row level security;
 create policy "profiles: leitura livre" on profiles
   for select using (true);
 create policy "profiles: atualizar livre" on profiles
+  for update using (true);
+
+-- ------------------------------------------------------------
+-- 8b) Subscrições de notificações push (Web Push)
+-- ------------------------------------------------------------
+create table if not exists push_subscriptions (
+  id bigint generated always as identity primary key,
+  user_name text not null check (user_name in ('maria', 'ivan')),
+  endpoint text not null unique,
+  p256dh text not null,
+  auth text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table push_subscriptions enable row level security;
+
+create policy "push_subscriptions: leitura livre" on push_subscriptions
+  for select using (true);
+create policy "push_subscriptions: inserir livre" on push_subscriptions
+  for insert with check (true);
+create policy "push_subscriptions: apagar livre" on push_subscriptions
+  for delete using (true);
+create policy "push_subscriptions: atualizar livre" on push_subscriptions
   for update using (true);
 
 -- ------------------------------------------------------------

@@ -1,0 +1,162 @@
+/* ============================ */
+/* O Nosso Estado */
+/* ============================ */
+.mood-section {
+    background: #fff;
+    width: 100%;
+    max-width: 640px;
+    margin: 30px auto 0;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(194, 24, 91, 0.15);
+    border: 4px solid #ffc1cc;
+    box-sizing: border-box;
+}
+
+.mood-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.4rem;
+    color: #c2185b;
+    margin: 0 0 6px;
+    text-align: center;
+}
+
+.mood-subtitle {
+    text-align: center;
+    color: #777;
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+    line-height: 1.5;
+}
+
+.mood-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.mood-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: #fffafc;
+    border: 1px solid #ffeef2;
+    border-radius: 16px;
+    padding: 14px 18px;
+    min-width: 120px;
+}
+
+.mood-card-emoji {
+    font-size: 2.4rem;
+    line-height: 1;
+}
+
+.mood-card-name {
+    font-weight: 700;
+    color: #c2185b;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.mood-card-label {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.mood-card-ago {
+    font-size: 0.7rem;
+    color: #aaa;
+}
+
+.mood-picker-label {
+    text-align: center;
+    font-weight: 600;
+    color: #c2185b;
+    font-size: 0.9rem;
+    margin: 0 0 10px;
+}
+
+.mood-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.mood-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: #fffafc;
+    border: 2px solid #ffeef2;
+    border-radius: 12px;
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.mood-option:hover {
+    border-color: #ffc1cc;
+}
+
+.mood-option.active {
+    border-color: #c2185b;
+    background: #fff0f5;
+    box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.15);
+}
+
+.mood-option-emoji {
+    font-size: 1.6rem;
+}
+
+.mood-option-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.mood-push-btn {
+    display: block;
+    margin: 0 auto;
+    background: linear-gradient(to right, #ec4899, #e11d48);
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.mood-push-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.mood-push-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #999;
+    margin: 10px 0 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .mood-section {
+        padding: 18px 14px;
+    }
+    .mood-title {
+        font-size: 2rem;
+    }
+    .mood-cards {
+        gap: 12px;
+    }
+    .mood-card {
+        min-width: 100px;
+        padding: 12px 10px;
+    }
+}

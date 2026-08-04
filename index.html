@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="photos.css" />
   <link rel="stylesheet" href="points.css" />
   <link rel="stylesheet" href="notes.css" />
+  <link rel="stylesheet" href="mood.css" />
   <meta property="og:title" content="Amo-te, Maria ❤️" />
   <meta property="og:description" content="O nosso cantinho: dias juntos, datas especiais e memórias." />
   <meta property="og:type" content="website" />
@@ -329,6 +330,41 @@
 
         <p class="booking-hint" id="notes-sync-hint"></p>
     </div>
+
+    <div id="mood-section" class="mood-section">
+        <h2 class="mood-title">O Nosso Estado 💭</h2>
+        <p class="mood-subtitle">Dizham como se sentem — feliz, triste, precisam de atenção ou de espaço, o que for.</p>
+
+        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+        <div id="mood-user-picker" class="booking-user-picker" hidden>
+            <span>A agir como:</span>
+            <button type="button" data-user="maria">Maria</button>
+            <button type="button" data-user="ivan">Ivan</button>
+        </div>
+
+        <div class="mood-cards">
+            <div class="mood-card">
+                <span id="mood-emoji-maria" class="mood-card-emoji">❔</span>
+                <span class="mood-card-name">Maria</span>
+                <span id="mood-label-maria" class="mood-card-label">Ainda não disse</span>
+                <span id="mood-ago-maria" class="mood-card-ago"></span>
+            </div>
+            <div class="mood-card">
+                <span id="mood-emoji-ivan" class="mood-card-emoji">❔</span>
+                <span class="mood-card-name">Ivan</span>
+                <span id="mood-label-ivan" class="mood-card-label">Ainda não disse</span>
+                <span id="mood-ago-ivan" class="mood-card-ago"></span>
+            </div>
+        </div>
+
+        <p class="mood-picker-label">Como estás agora?</p>
+        <div id="mood-picker" class="mood-picker"></div>
+
+        <button type="button" id="mood-push-btn" class="mood-push-btn" disabled>🔔 Ativar notificações</button>
+        <p class="mood-push-hint">No iPhone: adiciona o site ao ecrã principal (Partilhar → Adicionar ao Ecrã Principal) e abre a partir daí para as notificações funcionarem.</p>
+
+        <p class="booking-hint" id="mood-sync-hint"></p>
+    </div>
   </section>
 
 
@@ -385,6 +421,7 @@
   <!-- Supabase (base de dados partilhada) -->
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="supabase-config.js"></script>
+  <script defer src="push-config.js"></script>
   <script defer src="supabase-client.js"></script>
   <script defer src="auth.js"></script>
 
@@ -397,6 +434,7 @@
   <script defer src="photos.js"></script>
   <script defer src="points.js"></script>
   <script defer src="notes.js"></script>
+  <script defer src="mood.js"></script>
   <script defer src="extra.js"></script>
 
 </body>
