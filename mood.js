@@ -20,7 +20,10 @@
         { key: 'doubt', emoji: '🤔', label: 'Com dúvidas' },
         { key: 'dontknow', emoji: '🤷', label: 'Não sei' },
         { key: 'confused', emoji: '😵‍💫', label: 'Confuso(a)' },
-        { key: 'dumb', emoji: '🤪', label: 'És burro(a)' }
+        { key: 'dumb', emoji: '🤪', label: 'És burro(a)' },
+        { key: 'hungry', emoji: '🍔', label: 'Tenho fome' },
+        { key: 'thirsty', emoji: '🥤', label: 'Tenho sede' },
+        { key: 'emergency', emoji: '🚨', label: 'Emergência' }
     ];
     const CUSTOM_KEY = 'custom';
     const CUSTOM_EMOJI = '✍️';
