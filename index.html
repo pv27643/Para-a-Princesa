@@ -208,6 +208,10 @@
             <button type="button" id="board-new-btn" class="board-new-btn" aria-label="Novo quadro" title="Começar um quadro novo">+</button>
         </div>
 
+        <div class="board-canvas-wrap">
+            <canvas id="board-canvas" class="board-canvas" width="800" height="600"></canvas>
+        </div>
+
         <!-- Navegação entre quadros: esquerda = mais antigos, direita = mais recentes.
              Dá para arrastar aqui (fora da área de desenho) ou usar as setas. -->
         <div id="board-nav" class="board-nav">
@@ -216,9 +220,6 @@
             <button type="button" id="board-nav-next" class="board-nav-btn" aria-label="Quadro seguinte (mais recente)">›</button>
         </div>
 
-        <div class="board-canvas-wrap">
-            <canvas id="board-canvas" class="board-canvas" width="800" height="600"></canvas>
-        </div>
         <p class="board-hint" id="board-sync-hint"></p>
     </div>
 
