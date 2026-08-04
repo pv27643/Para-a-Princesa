@@ -119,6 +119,29 @@
     line-height: 1.2;
 }
 
+.mood-custom-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: #fffafc;
+    border: 2px solid #ffeef2;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 16px;
+}
+
+.mood-custom-input {
+    flex: 1;
+    min-width: 140px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 2px solid #ffc1cc;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    color: #555;
+}
+
 .mood-push-btn {
     display: block;
     margin: 0 auto;

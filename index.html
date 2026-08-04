@@ -215,7 +215,7 @@
 
     <div id="mood-section" class="mood-section">
         <h2 class="mood-title">O Nosso Estado 💭</h2>
-        <p class="mood-subtitle">Dizham como se sentem — feliz, triste, precisam de atenção ou de espaço, o que for.</p>
+        <p class="mood-subtitle">Digam como se sentem — feliz, triste, precisam de atenção ou de espaço, o que for.</p>
 
         <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
         <div id="mood-user-picker" class="booking-user-picker" hidden>
@@ -241,6 +241,12 @@
 
         <p class="mood-picker-label">Como estás agora?</p>
         <div id="mood-picker" class="mood-picker"></div>
+
+        <div id="mood-custom-row" class="mood-custom-row hidden-step">
+            <input type="text" id="mood-custom-input" class="mood-custom-input" placeholder="Escreve o teu estado..." maxlength="60" />
+            <button type="button" id="mood-custom-save-btn" class="booking-propose-btn">Guardar</button>
+            <button type="button" id="mood-custom-cancel-btn" class="vinyl-remove-no-btn">Cancelar</button>
+        </div>
 
         <button type="button" id="mood-push-btn" class="mood-push-btn" disabled>🔔 Ativar notificações</button>
         <p class="mood-push-hint">No iPhone: adiciona o site ao ecrã principal (Partilhar → Adicionar ao Ecrã Principal) e abre a partir daí para as notificações funcionarem.</p>

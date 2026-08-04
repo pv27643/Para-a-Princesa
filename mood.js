@@ -15,8 +15,15 @@
         { key: 'anxious', emoji: '😰', label: 'Ansioso(a)' },
         { key: 'sick', emoji: '🤒', label: 'Doente' },
         { key: 'attention', emoji: '🥺', label: 'Preciso de atenção' },
-        { key: 'space', emoji: '🌙', label: 'Preciso de espaço' }
+        { key: 'space', emoji: '🌙', label: 'Preciso de espaço' },
+        { key: 'waiting', emoji: '⏳', label: 'À espera' },
+        { key: 'doubt', emoji: '🤔', label: 'Com dúvidas' },
+        { key: 'dontknow', emoji: '🤷', label: 'Não sei' },
+        { key: 'confused', emoji: '😵‍💫', label: 'Confuso(a)' },
+        { key: 'dumb', emoji: '🤪', label: 'És burro(a)' }
     ];
+    const CUSTOM_KEY = 'custom';
+    const CUSTOM_EMOJI = '✍️';
     const moodByKey = {};
     MOODS.forEach((m) => { moodByKey[m.key] = m; });
 
@@ -37,9 +44,9 @@
                 return raw ? JSON.parse(raw) : {};
             } catch (_) { return {}; }
         },
-        async setMood(user, moodKey) {
+        async setMood(user, moodKey, customText) {
             const all = await this.loadAll();
-            all[user] = { mood_key: moodKey, mood_updated_at: new Date().toISOString() };
+            all[user] = { mood_key: moodKey, mood_custom_text: customText || null, mood_updated_at: new Date().toISOString() };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(all)); } catch (_) {}
             if (this._onChange) this._onChange();
         },
@@ -55,18 +62,18 @@
         async loadAll() {
             const { data, error } = await window.supabaseClient
                 .from('profiles')
-                .select('name, mood_key, mood_updated_at');
+                .select('name, mood_key, mood_updated_at, mood_custom_text');
             if (error) { console.warn('Não consegui carregar o estado:', error.message); return {}; }
             const out = {};
             (data || []).forEach((row) => {
-                out[row.name] = { mood_key: row.mood_key, mood_updated_at: row.mood_updated_at };
+                out[row.name] = { mood_key: row.mood_key, mood_updated_at: row.mood_updated_at, mood_custom_text: row.mood_custom_text };
             });
             return out;
         },
-        async setMood(user, moodKey) {
+        async setMood(user, moodKey, customText) {
             const { error } = await window.supabaseClient
                 .from('profiles')
-                .update({ mood_key: moodKey, mood_updated_at: new Date().toISOString() })
+                .update({ mood_key: moodKey, mood_custom_text: customText || null, mood_updated_at: new Date().toISOString() })
                 .eq('name', user);
             if (error) console.warn('Não consegui guardar o estado:', error.message);
         },
@@ -102,20 +109,27 @@
     function renderCards() {
         ['maria', 'ivan'].forEach((user) => {
             const info = moods[user] || {};
-            const mood = moodByKey[info.mood_key] || null;
+            const isCustom = info.mood_key === CUSTOM_KEY;
+            const mood = isCustom ? null : (moodByKey[info.mood_key] || null);
             const emojiEl = document.getElementById(`mood-emoji-${user}`);
             const labelEl = document.getElementById(`mood-label-${user}`);
             const agoEl = document.getElementById(`mood-ago-${user}`);
-            if (emojiEl) emojiEl.textContent = mood ? mood.emoji : '❔';
-            if (labelEl) labelEl.textContent = mood ? mood.label : 'Ainda não disse';
+            if (emojiEl) emojiEl.textContent = isCustom ? CUSTOM_EMOJI : (mood ? mood.emoji : '❔');
+            if (labelEl) labelEl.textContent = isCustom ? (info.mood_custom_text || 'Personalizado') : (mood ? mood.label : 'Ainda não disse');
             if (agoEl) agoEl.textContent = info.mood_updated_at ? timeAgo(info.mood_updated_at) : '';
         });
+    }
+
+    function hideCustomRow() {
+        const row = document.getElementById('mood-custom-row');
+        if (row) row.classList.add('hidden-step');
     }
 
     function renderPicker() {
         const picker = document.getElementById('mood-picker');
         if (!picker) return;
-        const myMood = activeUser && moods[activeUser] ? moods[activeUser].mood_key : null;
+        const myInfo = activeUser ? moods[activeUser] : null;
+        const myMood = myInfo ? myInfo.mood_key : null;
         picker.innerHTML = '';
         MOODS.forEach((m) => {
             const btn = document.createElement('button');
@@ -124,6 +138,7 @@
             btn.innerHTML = `<span class="mood-option-emoji">${m.emoji}</span><span class="mood-option-label">${m.label}</span>`;
             btn.addEventListener('click', async () => {
                 if (!activeUser) return;
+                hideCustomRow();
                 await MoodStorage.setMood(activeUser, m.key);
                 moods[activeUser] = { mood_key: m.key, mood_updated_at: new Date().toISOString() };
                 renderCards();
@@ -132,6 +147,20 @@
             });
             picker.appendChild(btn);
         });
+
+        const customBtn = document.createElement('button');
+        customBtn.type = 'button';
+        customBtn.className = 'mood-option' + (myMood === CUSTOM_KEY ? ' active' : '');
+        customBtn.innerHTML = `<span class="mood-option-emoji">${CUSTOM_EMOJI}</span><span class="mood-option-label">Personalizado</span>`;
+        customBtn.addEventListener('click', () => {
+            if (!activeUser) return;
+            const row = document.getElementById('mood-custom-row');
+            const input = document.getElementById('mood-custom-input');
+            if (input) input.value = myMood === CUSTOM_KEY && myInfo ? (myInfo.mood_custom_text || '') : '';
+            if (row) { row.classList.remove('hidden-step'); }
+            if (input) input.focus();
+        });
+        picker.appendChild(customBtn);
     }
 
     async function refresh() {
@@ -240,6 +269,29 @@
 
         const pushBtn = document.getElementById('mood-push-btn');
         if (pushBtn) pushBtn.addEventListener('click', enablePush);
+
+        const customInput = document.getElementById('mood-custom-input');
+        const customSaveBtn = document.getElementById('mood-custom-save-btn');
+        const customCancelBtn = document.getElementById('mood-custom-cancel-btn');
+        if (customSaveBtn) {
+            customSaveBtn.addEventListener('click', async () => {
+                if (!activeUser) return;
+                const text = customInput ? customInput.value.trim() : '';
+                if (!text) return;
+                await MoodStorage.setMood(activeUser, CUSTOM_KEY, text);
+                moods[activeUser] = { mood_key: CUSTOM_KEY, mood_custom_text: text, mood_updated_at: new Date().toISOString() };
+                hideCustomRow();
+                renderCards();
+                renderPicker();
+                notifyOther({ emoji: CUSTOM_EMOJI, label: text });
+            });
+        }
+        if (customCancelBtn) customCancelBtn.addEventListener('click', hideCustomRow);
+        if (customInput) {
+            customInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && customSaveBtn) customSaveBtn.click();
+            });
+        }
 
         MoodStorage.subscribe(() => refresh());
         refresh();
