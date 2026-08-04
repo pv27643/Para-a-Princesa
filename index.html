@@ -18,6 +18,8 @@
   <link rel="stylesheet" href="points.css" />
   <link rel="stylesheet" href="notes.css" />
   <link rel="stylesheet" href="mood.css" />
+  <link rel="stylesheet" href="vinyl.css" />
+  <link rel="stylesheet" href="gift.css" />
   <meta property="og:title" content="Amo-te, Maria ❤️" />
   <meta property="og:description" content="O nosso cantinho: dias juntos, datas especiais e memórias." />
   <meta property="og:type" content="website" />
@@ -38,6 +40,21 @@
               <button type="button" id="auth-submit-btn" class="auth-submit-btn">Entrar</button>
           </div>
           <p id="auth-error" class="auth-error"></p>
+      </div>
+  </div>
+
+  <!-- Revelação especial: mensagem única + escolha de desbloqueio -->
+  <div id="gift-overlay" class="gift-overlay hidden">
+      <div class="gift-overlay-content">
+          <div id="gift-step-message" class="gift-step">
+              <p class="gift-message">Olá, demorou, queria fazer isto para surpresa de um anoooo para a Minha Princesa,<br>Mas queria fazer algo bem e não tive tempo.<br>Está aqui uma das prendas que te queria dar 💕</p>
+              <button type="button" id="gift-continue-btn" class="gift-btn">Continuar</button>
+          </div>
+          <div id="gift-step-choice" class="gift-step hidden-step">
+              <p class="gift-choice-title">Como queres ver os presentes?</p>
+              <button type="button" id="gift-choice-all" class="gift-btn">Quero ver tudo já 👀<span class="gift-btn-sub">sei que és ansiosa 😏</span></button>
+              <button type="button" id="gift-choice-daily" class="gift-btn secondary">Um por dia 🎁</button>
+          </div>
       </div>
   </div>
 
@@ -365,6 +382,37 @@
 
         <p class="booking-hint" id="mood-sync-hint"></p>
     </div>
+
+    <div id="vinyl-section" class="vinyl-section">
+        <h2 class="vinyl-title">Os Nossos Vinis 🎵</h2>
+        <p class="vinyl-subtitle">Um disco por mês: uma foto, uma mensagem, e uma música se quiserem.</p>
+
+        <!-- Só aparece em modo de teste, sem login real (sem Supabase configurado) -->
+        <div id="vinyl-user-picker" class="booking-user-picker" hidden>
+            <span>A agir como:</span>
+            <button type="button" data-user="maria">Maria</button>
+            <button type="button" data-user="ivan">Ivan</button>
+        </div>
+
+        <div id="vinyl-grid" class="vinyl-grid"></div>
+
+        <div class="vinyl-form">
+            <label class="vinyl-field-label">Mês
+                <input type="month" id="vinyl-month-input" class="vinyl-month-input" />
+            </label>
+            <label class="vinyl-field-label">Foto (obrigatória)
+                <input type="file" id="vinyl-photo-input" accept="image/*" />
+            </label>
+            <label class="vinyl-field-label">Música (opcional)
+                <input type="file" id="vinyl-audio-input" accept="audio/*" />
+            </label>
+            <textarea id="vinyl-message-input" class="notes-text-input" placeholder="Escreve a mensagem deste vinil..." maxlength="300" rows="2"></textarea>
+            <button type="button" id="vinyl-add-btn" class="booking-propose-btn">Criar Vinil</button>
+        </div>
+        <p id="vinyl-error" class="booking-error"></p>
+
+        <p class="booking-hint" id="vinyl-sync-hint"></p>
+    </div>
   </section>
 
 
@@ -435,6 +483,8 @@
   <script defer src="points.js"></script>
   <script defer src="notes.js"></script>
   <script defer src="mood.js"></script>
+  <script defer src="gift.js"></script>
+  <script defer src="vinyl.js"></script>
   <script defer src="extra.js"></script>
 
 </body>

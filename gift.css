@@ -1,0 +1,93 @@
+/* ============================ */
+/* Revelação especial (mensagem única + escolha) */
+/* ============================ */
+.gift-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    background: linear-gradient(135deg, #ffdee9, #ffc1cc);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+.gift-overlay.hidden {
+    display: none;
+}
+
+.gift-overlay-content {
+    background: #fff;
+    border: 4px solid #ffc1cc;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    padding: 36px 28px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+}
+
+.hidden-step {
+    display: none;
+}
+
+.gift-message {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: #c2185b;
+    line-height: 1.7;
+    margin: 0 0 26px;
+}
+
+.gift-choice-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.9rem;
+    color: #c2185b;
+    margin: 0 0 20px;
+}
+
+.gift-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background: linear-gradient(to right, #ec4899, #e11d48);
+    color: #fff;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: transform 0.2s;
+    box-sizing: border-box;
+}
+
+.gift-btn:hover {
+    transform: scale(1.02);
+}
+
+.gift-btn.secondary {
+    background: #fff0f5;
+    color: #c2185b;
+    border: 2px solid #ffc1cc;
+}
+
+.gift-btn-sub {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-top: 2px;
+}
+
+@media (max-width: 480px) {
+    .gift-overlay-content {
+        padding: 28px 20px;
+    }
+    .gift-message {
+        font-size: 1.05rem;
+    }
+}
