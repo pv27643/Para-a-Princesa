@@ -52,10 +52,25 @@ $$;
 grant execute on function verify_pin(text, text) to anon;
 
 -- ------------------------------------------------------------
--- 2) Quadro (desenho partilhado) — cada traço é uma linha
+-- 2) Quadro — vários desenhos ("boards"), todos editáveis, navegáveis
+--    para os lados. Cada traço é uma linha, associada a um board_id.
 -- ------------------------------------------------------------
+create table if not exists boards (
+  id bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  created_by text
+);
+
+alter table boards enable row level security;
+
+create policy "boards: leitura livre" on boards
+  for select using (true);
+create policy "boards: inserir livre" on boards
+  for insert with check (true);
+
 create table if not exists board_strokes (
   id bigint generated always as identity primary key,
+  board_id bigint references boards(id),
   color text not null,
   size int not null,
   erase boolean not null default false,
@@ -150,6 +165,7 @@ create policy "photos bucket: apagar livre" on storage.objects
 -- ------------------------------------------------------------
 -- 6) Ativar Realtime nas tabelas que precisam de atualizar ao vivo
 -- ------------------------------------------------------------
+alter publication supabase_realtime add table boards;
 alter publication supabase_realtime add table board_strokes;
 alter publication supabase_realtime add table duck_taps;
 alter publication supabase_realtime add table date_requests;

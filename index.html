@@ -196,6 +196,14 @@
         <h2 class="board-title">O Nosso Quadro 🎨</h2>
         <p class="board-subtitle">Desenhem um para o outro.</p>
 
+        <!-- Navegação entre quadros: esquerda = mais antigos, direita = mais recentes.
+             Dá para arrastar aqui (fora da área de desenho) ou usar as setas. -->
+        <div id="board-nav" class="board-nav">
+            <button type="button" id="board-nav-prev" class="board-nav-btn" aria-label="Quadro anterior (mais antigo)">‹</button>
+            <span id="board-nav-indicator" class="board-nav-indicator">1 / 1</span>
+            <button type="button" id="board-nav-next" class="board-nav-btn" aria-label="Quadro seguinte (mais recente)">›</button>
+        </div>
+
         <div class="board-toolbar">
             <div class="board-colors" id="board-colors">
                 <button type="button" class="board-color active" data-color="#c2185b" style="background:#c2185b" aria-label="Rosa"></button>
@@ -205,7 +213,7 @@
                 <button type="button" class="board-color" data-color="#2a9d8f" style="background:#2a9d8f" aria-label="Verde"></button>
             </div>
             <button type="button" id="board-eraser-btn" class="board-action-btn" aria-pressed="false">🧼 Borracha</button>
-            <button type="button" id="board-save-btn" class="board-new-btn" aria-label="Guardar e começar um novo desenho" title="Guardar e começar um novo desenho">+</button>
+            <button type="button" id="board-new-btn" class="board-new-btn" aria-label="Novo quadro" title="Começar um quadro novo">+</button>
         </div>
 
         <div class="board-canvas-wrap">
