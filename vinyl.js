@@ -282,6 +282,25 @@
         const messageInput = document.getElementById('vinyl-message-input');
         const addBtn = document.getElementById('vinyl-add-btn');
         const errorEl = document.getElementById('vinyl-error');
+        const form = document.getElementById('vinyl-form');
+        const openFormBtn = document.getElementById('vinyl-open-form-btn');
+        const cancelBtn = document.getElementById('vinyl-cancel-btn');
+
+        function closeForm() {
+            if (form) form.classList.add('vinyl-form-collapsed');
+            if (openFormBtn) openFormBtn.classList.remove('vinyl-form-collapsed');
+            if (photoInput) photoInput.value = '';
+            if (audioInput) audioInput.value = '';
+            if (messageInput) messageInput.value = '';
+            if (errorEl) errorEl.textContent = '';
+        }
+        if (openFormBtn) {
+            openFormBtn.addEventListener('click', () => {
+                if (form) form.classList.remove('vinyl-form-collapsed');
+                openFormBtn.classList.add('vinyl-form-collapsed');
+            });
+        }
+        if (cancelBtn) cancelBtn.addEventListener('click', closeForm);
 
         if (addBtn) {
             addBtn.addEventListener('click', async () => {
@@ -297,10 +316,7 @@
                 addBtn.disabled = true;
                 await VinylStorage.add(month, photoFile, audioFile, message, activeUser);
                 addBtn.disabled = false;
-                if (errorEl) errorEl.textContent = '';
-                if (photoInput) photoInput.value = '';
-                if (audioInput) audioInput.value = '';
-                if (messageInput) messageInput.value = '';
+                closeForm();
                 refresh();
             });
         }

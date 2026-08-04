@@ -396,7 +396,9 @@
 
         <div id="vinyl-grid" class="vinyl-grid"></div>
 
-        <div class="vinyl-form">
+        <button type="button" id="vinyl-open-form-btn" class="mood-push-btn">➕ Criar Vinil</button>
+
+        <div id="vinyl-form" class="vinyl-form vinyl-form-collapsed">
             <label class="vinyl-field-label">Mês
                 <input type="month" id="vinyl-month-input" class="vinyl-month-input" />
             </label>
@@ -407,7 +409,10 @@
                 <input type="file" id="vinyl-audio-input" accept="audio/*" />
             </label>
             <textarea id="vinyl-message-input" class="notes-text-input" placeholder="Escreve a mensagem deste vinil..." maxlength="300" rows="2"></textarea>
-            <button type="button" id="vinyl-add-btn" class="booking-propose-btn">Criar Vinil</button>
+            <div class="vinyl-form-actions">
+                <button type="button" id="vinyl-add-btn" class="booking-propose-btn">Guardar</button>
+                <button type="button" id="vinyl-cancel-btn" class="board-action-btn">Cancelar</button>
+            </div>
         </div>
         <p id="vinyl-error" class="booking-error"></p>
 

@@ -165,6 +165,20 @@
     border: 1px solid #ffeef2;
     border-radius: 14px;
     padding: 14px;
+    margin-top: 12px;
+}
+
+.vinyl-form-collapsed {
+    display: none;
+}
+
+.vinyl-form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.vinyl-form-actions .booking-propose-btn {
+    flex: 1;
 }
 
 .vinyl-field-label {
