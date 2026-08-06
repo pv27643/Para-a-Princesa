@@ -100,16 +100,32 @@
         try { localStorage.setItem(ACTIVITY_TABLE_KEY, JSON.stringify(data)); } catch (_) {}
     }
 
+    const ACTIVITY_CUSTOM_KEY = 'tripActivityCustomNames:v1';
+    function loadCustomActivityNames() {
+        try {
+            const raw = localStorage.getItem(ACTIVITY_CUSTOM_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (_) { return []; }
+    }
+    function saveCustomActivityNames(names) {
+        try { localStorage.setItem(ACTIVITY_CUSTOM_KEY, JSON.stringify(names)); } catch (_) {}
+    }
+    function allActivityNames() {
+        return (window.TRIP_ACTIVITY_OPTIONS || []).concat(loadCustomActivityNames());
+    }
+
     function renderActivityTable() {
         const tbody = document.getElementById('trip-activity-tbody');
-        if (!tbody || !window.TRIP_ACTIVITY_OPTIONS) return;
+        if (!tbody) return;
         const data = loadActivityData();
+        const customNames = loadCustomActivityNames();
         tbody.innerHTML = '';
-        window.TRIP_ACTIVITY_OPTIONS.forEach((name) => {
+        allActivityNames().forEach((name) => {
             const row = data[name] || {};
+            const isCustom = customNames.includes(name);
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${escapeHtml(name)}</td>
+                <td>${escapeHtml(name)}${isCustom ? ' <button type="button" class="trip-activity-remove-btn" title="Remover">×</button>' : ''}</td>
                 <td><input type="text" data-field="preco" placeholder="€" value="${escapeHtml(row.preco || '')}"></td>
                 <td><input type="text" data-field="duracao" placeholder="ex: 1h" value="${escapeHtml(row.duracao || '')}"></td>
                 <td><input type="text" data-field="zona" placeholder="zona da cidade" value="${escapeHtml(row.zona || '')}"></td>
@@ -122,8 +138,27 @@
                     saveActivityData(current);
                 });
             });
+            const removeBtn = tr.querySelector('.trip-activity-remove-btn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    saveCustomActivityNames(loadCustomActivityNames().filter((n) => n !== name));
+                    const current = loadActivityData();
+                    delete current[name];
+                    saveActivityData(current);
+                    renderActivityTable();
+                });
+            }
             tbody.appendChild(tr);
         });
+    }
+
+    function addCustomActivity(name) {
+        const trimmed = name.trim();
+        if (!trimmed || allActivityNames().includes(trimmed)) return;
+        const names = loadCustomActivityNames();
+        names.push(trimmed);
+        saveCustomActivityNames(names);
+        renderActivityTable();
     }
 
     function renderPlanoB() {
@@ -138,5 +173,19 @@
         renderChecklist();
         renderActivityTable();
         renderPlanoB();
+
+        const newActivityInput = document.getElementById('trip-activity-new-input');
+        const newActivityBtn = document.getElementById('trip-activity-add-btn');
+        function submitNewActivity() {
+            if (!newActivityInput) return;
+            addCustomActivity(newActivityInput.value);
+            newActivityInput.value = '';
+        }
+        if (newActivityBtn) newActivityBtn.addEventListener('click', submitNewActivity);
+        if (newActivityInput) {
+            newActivityInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') submitNewActivity();
+            });
+        }
     });
 })();
