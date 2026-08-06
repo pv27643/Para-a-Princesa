@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viagem Lisboa ✈️</title>
+  <meta name="description" content="Guia da viagem a Lisboa — dias, informações úteis e checklist." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="auth.css" />
+  <link rel="stylesheet" href="viagem.css" />
+</head>
+<body class="trip-body">
+
+  <!-- Ecrã de login (igual ao resto do site — PIN Maria/Ivan) -->
+  <div id="auth-gate" class="auth-gate hidden">
+      <div class="auth-card">
+          <h2 class="auth-title">Quem és tu? ❤️</h2>
+          <div class="auth-users">
+              <button type="button" class="auth-user-btn" data-user="maria">Maria</button>
+              <button type="button" class="auth-user-btn" data-user="ivan">Ivan</button>
+          </div>
+          <div id="auth-pin-row" class="auth-pin-row">
+              <input id="auth-pin-input" class="auth-pin-input" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" />
+              <button type="button" id="auth-submit-btn" class="auth-submit-btn">Entrar</button>
+          </div>
+          <p id="auth-error" class="auth-error"></p>
+      </div>
+  </div>
+
+  <div class="trip-topbar">
+      <a href="index.html">← Voltar ao site</a>
+      <span class="trip-topbar-title">✈️ Viagem Lisboa</span>
+      <a href="viagem-despesas.html">Despesas 💶</a>
+  </div>
+
+  <div class="trip-hero">
+      <h1>Viagem Lisboa</h1>
+      <p>Alfama, Belém, Oceanário e muito mais — sem pressa nenhuma.</p>
+  </div>
+
+  <div class="trip-wrap">
+
+      <section class="trip-section">
+          <h2>Informações úteis</h2>
+          <div id="trip-info-grid" class="trip-info-grid"></div>
+      </section>
+
+      <section class="trip-section">
+          <h2>Os dias</h2>
+          <div id="trip-days"></div>
+      </section>
+
+      <section class="trip-section">
+          <h2>Checklist de bagagem</h2>
+          <ul id="trip-checklist" class="trip-checklist"></ul>
+      </section>
+
+      <section class="trip-section">
+          <h2>Atividade dinâmica</h2>
+          <p style="margin-top:-8px; font-size:0.85rem; color:#8a7d5f;">Para comparar e escolher mais tarde.</p>
+          <div style="overflow-x:auto;">
+              <table class="trip-activity-table">
+                  <thead>
+                      <tr>
+                          <th>Atividade</th>
+                          <th>Preço</th>
+                          <th>Duração</th>
+                          <th>Zona da cidade</th>
+                      </tr>
+                  </thead>
+                  <tbody id="trip-activity-tbody"></tbody>
+              </table>
+          </div>
+      </section>
+
+      <section class="trip-section">
+          <h2>Plano B (chuva)</h2>
+          <ul id="trip-planob" class="trip-planob"></ul>
+      </section>
+
+  </div>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="supabase-config.js"></script>
+  <script defer src="supabase-client.js"></script>
+  <script defer src="auth.js"></script>
+  <script defer src="viagem-data.js"></script>
+  <script defer src="viagem.js"></script>
+</body>
+</html>

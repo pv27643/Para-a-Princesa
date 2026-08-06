@@ -361,6 +361,27 @@ create policy "special_dates: apagar livre" on special_dates
   for delete using (true);
 
 -- ------------------------------------------------------------
+-- 14) Despesas da Viagem Lisboa (página pública, sem PIN — viagem-despesas.html)
+-- ------------------------------------------------------------
+create table if not exists trip_expenses (
+  id uuid primary key default gen_random_uuid(),
+  descricao text not null,
+  valor numeric not null,
+  categoria text,
+  quem text,
+  created_at timestamptz not null default now()
+);
+
+alter table trip_expenses enable row level security;
+
+create policy "trip_expenses: leitura livre" on trip_expenses
+  for select using (true);
+create policy "trip_expenses: inserir livre" on trip_expenses
+  for insert with check (true);
+create policy "trip_expenses: apagar livre" on trip_expenses
+  for delete using (true);
+
+-- ------------------------------------------------------------
 -- 12) Ativar Realtime nas tabelas que precisam de atualizar ao vivo
 -- ------------------------------------------------------------
 alter publication supabase_realtime add table boards;
@@ -375,6 +396,7 @@ alter publication supabase_realtime add table sticky_notes;
 alter publication supabase_realtime add table vinyls;
 alter publication supabase_realtime add table gift_state;
 alter publication supabase_realtime add table special_dates;
+alter publication supabase_realtime add table trip_expenses;
 
 -- ============================================================
 -- NOTA DE SEGURANÇA
@@ -385,4 +407,8 @@ alter publication supabase_realtime add table special_dates;
 -- real é o ecrã de PIN à entrada do site, que é uma barreira do lado
 -- do browser, não do servidor. Para duas pessoas e um site pessoal
 -- isto é um compromisso razoável; não guardes aqui nada sensível.
+--
+-- trip_expenses é ainda mais aberta de propósito: viagem-despesas.html
+-- nem sequer tem o ecrã de PIN (é um link direto), para dar para
+-- registar despesas no telemóvel durante a viagem sem fricção nenhuma.
 -- ============================================================
