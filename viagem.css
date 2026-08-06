@@ -137,6 +137,12 @@ body.trip-body {
 }
 
 /* Day cards */
+.trip-pdf-btn {
+    display: block;
+    margin: -6px 0 16px;
+    width: fit-content;
+}
+
 .trip-day {
     border: 1px solid var(--trip-beige-dark);
     border-radius: 14px;
