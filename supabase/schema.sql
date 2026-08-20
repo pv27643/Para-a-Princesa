@@ -279,6 +279,19 @@ alter table profiles add column if not exists mood_key text;
 alter table profiles add column if not exists mood_updated_at timestamptz;
 alter table profiles add column if not exists mood_custom_text text; -- usado quando mood_key = 'custom'
 alter table profiles add column if not exists mood_custom_emoji text; -- idem, emoji escolhido à mão
+alter table profiles add column if not exists mood_custom_photo_path text; -- idem, foto opcional
+
+-- Bucket de armazenamento para as fotos do estado personalizado
+insert into storage.buckets (id, name, public)
+values ('mood-photos', 'mood-photos', true)
+on conflict (id) do nothing;
+
+create policy "mood-photos bucket: leitura publica" on storage.objects
+  for select using (bucket_id = 'mood-photos');
+create policy "mood-photos bucket: upload livre" on storage.objects
+  for insert with check (bucket_id = 'mood-photos');
+create policy "mood-photos bucket: apagar livre" on storage.objects
+  for delete using (bucket_id = 'mood-photos');
 
 create table if not exists push_subscriptions (
   id bigint generated always as identity primary key,
