@@ -356,21 +356,33 @@
             hintEl.hidden = configured;
         }
 
-        const colorBtns = document.querySelectorAll('.board-color');
+        const colorBtns = document.querySelectorAll('.board-color[data-color]');
+        const customColorInput = document.getElementById('board-color-custom');
+        const allSwatches = customColorInput ? [...colorBtns, customColorInput] : [...colorBtns];
         const eraserBtn = document.getElementById('board-eraser-btn');
         const newBtn = document.getElementById('board-new-btn');
         const prevBtn = document.getElementById('board-nav-prev');
         const nextBtn = document.getElementById('board-nav-next');
         const navEl = document.getElementById('board-nav');
 
+        function activateSwatch(el, color) {
+            allSwatches.forEach((s) => s.classList.remove('active'));
+            el.classList.add('active');
+            activeColor = color;
+            setEraser(false);
+        }
+
         colorBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                colorBtns.forEach((b) => b.classList.remove('active'));
-                btn.classList.add('active');
-                activeColor = btn.dataset.color;
-                setEraser(false);
-            });
+            btn.addEventListener('click', () => activateSwatch(btn, btn.dataset.color));
         });
+
+        // Escolhe uma cor à tua maneira: o próprio seletor nativo já mostra a
+        // cor escolhida, e cada alteração "arma" essa cor como ativa.
+        if (customColorInput) {
+            customColorInput.addEventListener('input', () => {
+                activateSwatch(customColorInput, customColorInput.value);
+            });
+        }
 
         if (eraserBtn) eraserBtn.addEventListener('click', () => setEraser(!isErasing));
         if (newBtn) newBtn.addEventListener('click', createNewBoard);

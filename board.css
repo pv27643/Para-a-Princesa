@@ -99,6 +99,29 @@
     box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.25);
 }
 
+/* Seletor de cor personalizada — mesmo tamanho/forma das bolinhas fixas,
+   mas abre o seletor de cor nativo para escolheres qualquer tom. */
+.board-color-custom {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+}
+
+.board-color-custom::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+
+.board-color-custom::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.board-color-custom::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
 .board-action-btn {
     background: #fff0f5;
     color: #c2185b;
