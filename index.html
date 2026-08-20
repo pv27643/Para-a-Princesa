@@ -227,12 +227,14 @@
 
         <div class="mood-cards">
             <div class="mood-card">
+                <img id="mood-photo-maria" class="mood-card-photo hidden-step" alt="Foto do estado de Maria" />
                 <span id="mood-emoji-maria" class="mood-card-emoji">❔</span>
                 <span class="mood-card-name">Maria</span>
                 <span id="mood-label-maria" class="mood-card-label">Ainda não disse</span>
                 <span id="mood-ago-maria" class="mood-card-ago"></span>
             </div>
             <div class="mood-card">
+                <img id="mood-photo-ivan" class="mood-card-photo hidden-step" alt="Foto do estado de Ivan" />
                 <span id="mood-emoji-ivan" class="mood-card-emoji">❔</span>
                 <span class="mood-card-name">Ivan</span>
                 <span id="mood-label-ivan" class="mood-card-label">Ainda não disse</span>
@@ -246,6 +248,14 @@
         <div id="mood-custom-row" class="mood-custom-row hidden-step">
             <input type="text" id="mood-custom-emoji-input" class="mood-custom-emoji-input" placeholder="😀" maxlength="8" />
             <input type="text" id="mood-custom-input" class="mood-custom-input" placeholder="Escreve o teu estado..." maxlength="60" />
+            <div id="mood-custom-photo-picker" class="mood-custom-photo-picker">
+                <button type="button" id="mood-custom-photo-btn" class="mood-custom-photo-btn" aria-label="Adicionar foto" title="Adicionar foto">📷</button>
+                <input type="file" id="mood-custom-photo-input" accept="image/*" hidden />
+                <div id="mood-custom-photo-preview-wrap" class="mood-custom-photo-preview-wrap hidden-step">
+                    <img id="mood-custom-photo-preview" class="mood-custom-photo-preview" alt="Pré-visualização da foto" />
+                    <button type="button" id="mood-custom-photo-remove-btn" class="mood-custom-photo-remove-btn" aria-label="Remover foto" title="Remover foto">✕</button>
+                </div>
+            </div>
             <button type="button" id="mood-custom-save-btn" class="booking-propose-btn">Guardar</button>
             <button type="button" id="mood-custom-cancel-btn" class="vinyl-remove-no-btn">Cancelar</button>
         </div>
