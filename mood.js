@@ -186,6 +186,23 @@
         showPhotoPreview(photoUrl(existingPath));
     }
 
+    function openPhotoLightbox(url) {
+        if (!url) return;
+        const modal = document.getElementById('mood-photo-lightbox');
+        const img = document.getElementById('mood-photo-lightbox-img');
+        if (!modal || !img) return;
+        img.src = url;
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePhotoLightbox() {
+        const modal = document.getElementById('mood-photo-lightbox');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
     function hideCustomRow() {
         const row = document.getElementById('mood-custom-row');
         if (row) row.classList.add('hidden-step');
@@ -402,6 +419,19 @@
                 });
             }
         }
+
+        // Foto do estado em tamanho grande, ao tocar na miniatura circular.
+        ['maria', 'ivan'].forEach((user) => {
+            const photoEl = document.getElementById(`mood-photo-${user}`);
+            if (photoEl) photoEl.addEventListener('click', () => openPhotoLightbox(photoEl.src));
+        });
+        const closeLightboxBtn = document.getElementById('close-mood-photo-lightbox-btn');
+        const lightboxOverlay = document.querySelector('#mood-photo-lightbox .mood-photo-lightbox-overlay');
+        if (closeLightboxBtn) closeLightboxBtn.addEventListener('click', closePhotoLightbox);
+        if (lightboxOverlay) lightboxOverlay.addEventListener('click', closePhotoLightbox);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePhotoLightbox();
+        });
 
         MoodStorage.subscribe(() => refresh());
         refresh();
