@@ -153,9 +153,6 @@
         <button id="open-game-btn" class="btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease;">
             🧩 Jogo da Memória
         </button>
-        <a href="viagem.html" class="btn primary" style="font-size: 1rem; padding: 10px 24px; background-color: white; color: #d63384; border: 2px solid #d63384; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 6px rgba(214, 51, 132, 0.2); transition: all 0.3s ease; text-decoration: none; display: inline-block;">
-            ✈️ Viagem Lisboa
-        </a>
     </div>
 
     <div class="counter-container">
@@ -303,10 +300,19 @@
                 <button type="button" class="board-color" data-color="#f3722c" style="background:#f3722c" aria-label="Laranja"></button>
                 <button type="button" class="board-color" data-color="#f9c74f" style="background:#f9c74f" aria-label="Amarelo"></button>
                 <button type="button" class="board-color" data-color="#e63946" style="background:#e63946" aria-label="Vermelho"></button>
-                <input type="color" id="board-color-custom" class="board-color board-color-custom" value="#00b4d8" title="Escolher a tua cor" aria-label="Cor personalizada" />
+                <button type="button" id="board-color-more-btn" class="board-color-more" aria-haspopup="true" aria-expanded="false" aria-label="Mais cores" title="Mais cores">🎨</button>
             </div>
             <button type="button" id="board-eraser-btn" class="board-action-btn" aria-pressed="false">🧼 Borracha</button>
             <button type="button" id="board-new-btn" class="board-new-btn" aria-label="Novo quadro" title="Começar um quadro novo">+</button>
+        </div>
+
+        <!-- Painel com muitas mais cores, aberto pelo botão 🎨 -->
+        <div id="board-color-panel" class="board-color-panel hidden" role="dialog" aria-label="Escolher mais cores">
+            <div class="board-color-grid" id="board-color-grid"></div>
+            <div class="board-color-hex-row">
+                <input type="text" id="board-color-hex-input" class="board-color-hex-input" placeholder="#ff66aa" maxlength="7" inputmode="text" />
+                <button type="button" id="board-color-hex-apply" class="board-action-btn">Usar</button>
+            </div>
         </div>
 
         <div id="board-canvas-wrap" class="board-canvas-wrap">

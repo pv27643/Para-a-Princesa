@@ -99,27 +99,95 @@
     box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.25);
 }
 
-/* Seletor de cor personalizada — mesmo tamanho/forma das bolinhas fixas,
-   mas abre o seletor de cor nativo para escolheres qualquer tom. */
-.board-color-custom {
-    -webkit-appearance: none;
-    appearance: none;
-    background: none;
-}
-
-.board-color-custom::-webkit-color-swatch-wrapper {
+/* Botão "mais cores" — mesmo tamanho das bolinhas fixas, abre o painel
+   com a paleta grande dentro da própria página. */
+.board-color-more {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
     padding: 0;
-    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-.board-color-custom::-webkit-color-swatch {
-    border: none;
-    border-radius: 50%;
+.board-color-more:hover {
+    transform: scale(1.1);
 }
 
-.board-color-custom::-moz-color-swatch {
-    border: none;
+.board-color-more.active {
+    border-color: #c2185b;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.25);
+}
+
+/* Painel de paleta grande, dentro da própria página (sem depender do
+   seletor de cor nativo do sistema). */
+.board-color-panel {
+    margin: 10px 0 14px;
+    padding: 14px;
+    background: #fffafc;
+    border: 2px solid #ffc1cc;
+    border-radius: 14px;
+}
+
+.board-color-panel.hidden {
+    display: none;
+}
+
+.board-color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(26px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.board-color-swatch {
+    width: 100%;
+    aspect-ratio: 1;
     border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.board-color-swatch:hover {
+    transform: scale(1.15);
+}
+
+.board-color-swatch.active {
+    border-color: #c2185b;
+    transform: scale(1.2);
+    box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.25);
+}
+
+.board-color-hex-row {
+    display: flex;
+    gap: 8px;
+}
+
+.board-color-hex-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid #ffc1cc;
+    border-radius: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    color: #444;
+    box-sizing: border-box;
+}
+
+.board-color-hex-input:focus {
+    outline: none;
+    border-color: #c2185b;
 }
 
 .board-action-btn {
