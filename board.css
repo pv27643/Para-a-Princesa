@@ -190,6 +190,10 @@
     border-color: #c2185b;
 }
 
+.board-color-hex-input.invalid {
+    border-color: #e63946;
+}
+
 .board-action-btn {
     background: #fff0f5;
     color: #c2185b;

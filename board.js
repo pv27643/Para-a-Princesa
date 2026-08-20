@@ -357,17 +357,28 @@
         }
 
         const colorBtns = document.querySelectorAll('.board-color[data-color]');
-        const customColorInput = document.getElementById('board-color-custom');
-        const allSwatches = customColorInput ? [...colorBtns, customColorInput] : [...colorBtns];
+        const moreBtn = document.getElementById('board-color-more-btn');
+        const colorPanel = document.getElementById('board-color-panel');
+        const colorGrid = document.getElementById('board-color-grid');
+        const hexInput = document.getElementById('board-color-hex-input');
+        const hexApplyBtn = document.getElementById('board-color-hex-apply');
         const eraserBtn = document.getElementById('board-eraser-btn');
         const newBtn = document.getElementById('board-new-btn');
         const prevBtn = document.getElementById('board-nav-prev');
         const nextBtn = document.getElementById('board-nav-next');
         const navEl = document.getElementById('board-nav');
 
+        function allSwatches() {
+            const gridBtns = colorGrid ? colorGrid.querySelectorAll('.board-color-swatch') : [];
+            return [...colorBtns, ...gridBtns, moreBtn].filter(Boolean);
+        }
+
         function activateSwatch(el, color) {
-            allSwatches.forEach((s) => s.classList.remove('active'));
-            el.classList.add('active');
+            allSwatches().forEach((s) => s.classList.remove('active'));
+            if (el) el.classList.add('active');
+            // O botão "mais cores" mostra a cor escolhida na paleta grande,
+            // para se ver de imediato qual está ativa sem abrir o painel.
+            if (moreBtn) moreBtn.style.background = (el === moreBtn) ? color : '';
             activeColor = color;
             setEraser(false);
         }
@@ -376,12 +387,91 @@
             btn.addEventListener('click', () => activateSwatch(btn, btn.dataset.color));
         });
 
-        // Escolhe uma cor à tua maneira: o próprio seletor nativo já mostra a
-        // cor escolhida, e cada alteração "arma" essa cor como ativa.
-        if (customColorInput) {
-            customColorInput.addEventListener('input', () => {
-                activateSwatch(customColorInput, customColorInput.value);
+        // Roda HSL -> hex, para gerar uma paleta grande sem escrever dezenas
+        // de códigos de cor à mão.
+        function hslToHex(h, s, l) {
+            s /= 100; l /= 100;
+            const k = (n) => (n + h / 30) % 12;
+            const a = s * Math.min(l, 1 - l);
+            const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+            const toHex = (x) => Math.round(255 * x).toString(16).padStart(2, '0');
+            return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+        }
+
+        function buildPalette() {
+            const hues = [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300, 320, 340];
+            const colors = [];
+            hues.forEach((h) => {
+                colors.push(hslToHex(h, 75, 55));
+                colors.push(hslToHex(h, 75, 75));
             });
+            colors.push('#000000', '#333333', '#666666', '#999999', '#cccccc', '#ffffff');
+            return colors;
+        }
+
+        function renderColorGrid() {
+            if (!colorGrid) return;
+            buildPalette().forEach((hex) => {
+                const swatch = document.createElement('button');
+                swatch.type = 'button';
+                swatch.className = 'board-color-swatch';
+                swatch.style.background = hex;
+                swatch.dataset.color = hex;
+                swatch.setAttribute('aria-label', hex);
+                swatch.addEventListener('click', () => {
+                    activateSwatch(swatch, hex);
+                    closeColorPanel();
+                });
+                colorGrid.appendChild(swatch);
+            });
+        }
+        renderColorGrid();
+
+        function openColorPanel() {
+            if (!colorPanel) return;
+            colorPanel.classList.remove('hidden');
+            if (moreBtn) moreBtn.setAttribute('aria-expanded', 'true');
+        }
+        function closeColorPanel() {
+            if (!colorPanel) return;
+            colorPanel.classList.add('hidden');
+            if (moreBtn) moreBtn.setAttribute('aria-expanded', 'false');
+        }
+        function toggleColorPanel() {
+            if (!colorPanel) return;
+            if (colorPanel.classList.contains('hidden')) openColorPanel();
+            else closeColorPanel();
+        }
+        if (moreBtn) moreBtn.addEventListener('click', toggleColorPanel);
+
+        // Fecha o painel ao tocar fora dele (mas não ao tocar no próprio
+        // botão que o abre, que já trata do toggle).
+        document.addEventListener('pointerdown', (e) => {
+            if (!colorPanel || colorPanel.classList.contains('hidden')) return;
+            if (colorPanel.contains(e.target) || (moreBtn && moreBtn.contains(e.target))) return;
+            closeColorPanel();
+        });
+
+        function applyHexColor() {
+            if (!hexInput) return;
+            let val = hexInput.value.trim();
+            if (!val) return;
+            if (!val.startsWith('#')) val = '#' + val;
+            if (!/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(val)) {
+                hexInput.classList.add('invalid');
+                return;
+            }
+            hexInput.classList.remove('invalid');
+            activateSwatch(moreBtn, val);
+            hexInput.value = '';
+            closeColorPanel();
+        }
+        if (hexApplyBtn) hexApplyBtn.addEventListener('click', applyHexColor);
+        if (hexInput) {
+            hexInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') applyHexColor();
+            });
+            hexInput.addEventListener('input', () => hexInput.classList.remove('invalid'));
         }
 
         if (eraserBtn) eraserBtn.addEventListener('click', () => setEraser(!isErasing));
